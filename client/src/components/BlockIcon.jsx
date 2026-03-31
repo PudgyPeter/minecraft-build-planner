@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getBlockDisplay } from '../data/blockImages';
+import './MinecraftTexture.css';
 
 export default function BlockIcon({ blockName, size = 24, className = '' }) {
   const [imageError, setImageError] = useState(false);
@@ -17,26 +18,38 @@ export default function BlockIcon({ blockName, size = 24, className = '' }) {
   
   // CSS-based block fallback for common materials
   const getBlockStyle = (name) => {
-    if (name.includes('stone') || name.includes('cobblestone')) {
-      return 'bg-gray-500';
+    if (name.includes('cobblestone')) {
+      return 'texture-cobblestone';
+    } else if (name.includes('stone')) {
+      return 'texture-stone';
+    } else if (name.includes('polished_diorite')) {
+      return 'texture-polished-diorite';
     } else if (name.includes('diorite')) {
-      return 'bg-gray-400';
+      return 'texture-diorite';
+    } else if (name.includes('polished_andesite')) {
+      return 'texture-polished-andesite';
     } else if (name.includes('andesite')) {
-      return 'bg-gray-600';
+      return 'texture-andesite';
+    } else if (name.includes('polished_granite')) {
+      return 'texture-polished-granite';
     } else if (name.includes('granite')) {
-      return 'bg-pink-300';
+      return 'texture-granite';
+    } else if (name.includes('oak_log')) {
+      return 'texture-oak';
+    } else if (name.includes('oak') && name.includes('plank')) {
+      return 'texture-oak-planks';
     } else if (name.includes('oak') || name.includes('wood') || name.includes('log')) {
-      return 'bg-amber-700';
+      return 'texture-oak';
     } else if (name.includes('plank')) {
-      return 'bg-amber-600';
+      return 'texture-oak-planks';
     } else if (name.includes('quartz')) {
-      return 'bg-white';
+      return 'texture-quartz';
     } else if (name.includes('sand')) {
-      return 'bg-yellow-200';
+      return 'texture-sand';
     } else if (name.includes('dirt')) {
-      return 'bg-amber-900';
+      return 'texture-dirt';
     } else if (name.includes('grass')) {
-      return 'bg-green-500';
+      return 'texture-grass';
     } else {
       return 'bg-gray-700';
     }
@@ -81,17 +94,14 @@ export default function BlockIcon({ blockName, size = 24, className = '' }) {
   // Enhanced fallback with CSS-based blocks
   return (
     <div 
-      className={`${className} rounded border-2 border-gray-600 flex items-center justify-center text-white text-xs font-bold`}
+      className={`${className} rounded border border-gray-700 ${getBlockStyle(blockName)}`}
       style={{ 
         width: size, 
         height: size,
-        backgroundColor: getBlockStyle(blockName),
-        fontSize: `${Math.max(8, size / 3)}px`,
-        imageRendering: 'pixelated'
+        imageRendering: 'pixelated',
+        boxShadow: 'inset 0 0 2px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2)'
       }}
       title={blockName}
-    >
-      {blockName.split('_').map(word => word[0]?.toUpperCase()).join('').slice(0, 2)}
-    </div>
+    />
   );
 }
