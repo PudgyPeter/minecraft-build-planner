@@ -292,8 +292,8 @@ const baseMaterials = new Set([
   'light_gray_concrete', 'cyan_concrete', 'purple_concrete', 'blue_concrete',
   'brown_concrete', 'green_concrete', 'red_concrete', 'black_concrete',
   'andesite', 'diorite', 'granite', 'tuff', 'calcite', 'deepslate',
-  'cobbled_deepslate', 'polished_andesite', 'polished_diorite', 'polished_granite',
-  'polished_deepslate', 'deepslate_bricks', 'deepslate_tiles'
+  'cobbled_deepslate',
+  'quartz'
 ]);
 
 function calculateBaseMaterials(materials) {

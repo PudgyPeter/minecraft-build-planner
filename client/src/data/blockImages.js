@@ -1126,14 +1126,45 @@ export const blockImages = {
 export function getBlockDisplay(blockName) {
   const imageUrl = blockImages[blockName];
   
+  // Try exact match first
   if (imageUrl && imageUrl.startsWith('http')) {
     return { type: 'image', url: imageUrl };
   } else if (imageUrl && imageUrl.startsWith('/textures/')) {
     return { type: 'image', url: imageUrl };
   } else if (imageUrl && (imageUrl.startsWith('🔴') || imageUrl.startsWith('🟢') || imageUrl.startsWith('🔵') || imageUrl.startsWith('🟡') || imageUrl.startsWith('⚪'))) {
     return { type: 'emoji', emoji: imageUrl };
-  } else {
-    // Default fallback
-    return { type: 'emoji', emoji: '📦' };
   }
+  
+  // Try local texture as fallback
+  const localTexturePath = `/textures/${blockName}.png`;
+  
+  // Try to find a similar block texture
+  const baseBlockName = blockName
+    .replace(/_stairs$/, '')
+    .replace(/_slab$/, '')
+    .replace(/_wall$/, '')
+    .replace(/_fence$/, '')
+    .replace(/_fence_gate$/, '')
+    .replace(/_door$/, '')
+    .replace(/_trapdoor$/, '')
+    .replace(/_button$/, '')
+    .replace(/_pressure_plate$/, '')
+    .replace(/_sign$/, '')
+    .replace(/_hanging_sign$/, '');
+  
+  // If we removed a suffix, try the base block
+  if (baseBlockName !== blockName && blockImages[baseBlockName]) {
+    const baseUrl = blockImages[baseBlockName];
+    if (baseUrl && (baseUrl.startsWith('http') || baseUrl.startsWith('/textures/'))) {
+      return { type: 'image', url: baseUrl };
+    }
+  }
+  
+  // Try local texture for base block
+  if (baseBlockName !== blockName) {
+    return { type: 'image', url: `/textures/${baseBlockName}.png`, fallback: true };
+  }
+  
+  // Try local texture for original block
+  return { type: 'image', url: localTexturePath, fallback: true };
 }
