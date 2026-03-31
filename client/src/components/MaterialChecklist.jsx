@@ -278,7 +278,6 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
             </button>
           </div>
         </div>
-          </div>
         </div>
 
         {/* Materials List */}
@@ -457,7 +456,6 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
           onClose={() => setShowBaseMaterials(false)}
         />
       )}
-        </div>
       </div>
     </div>
   );
