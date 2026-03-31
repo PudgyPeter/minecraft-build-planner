@@ -33,6 +33,16 @@ const craftingRecipes = {
   'polished_granite_stairs': { input: { 'polished_granite': 6 }, output: 4 },
   'polished_granite_slab': { input: { 'polished_granite': 3 }, output: 6 },
   
+  // Walls
+  'stone_wall': { input: { 'stone': 6 }, output: 6 },
+  'cobblestone_wall': { input: { 'cobblestone': 6 }, output: 6 },
+  'andesite_wall': { input: { 'andesite': 6 }, output: 6 },
+  'diorite_wall': { input: { 'diorite': 6 }, output: 6 },
+  'granite_wall': { input: { 'granite': 6 }, output: 6 },
+  'polished_andesite_wall': { input: { 'polished_andesite': 6 }, output: 6 },
+  'polished_diorite_wall': { input: { 'polished_diorite': 6 }, output: 6 },
+  'polished_granite_wall': { input: { 'polished_granite': 6 }, output: 6 },
+  
   // Deepslate variants
   'cobbled_deepslate_stairs': { input: { 'cobbled_deepslate': 6 }, output: 4 },
   'cobbled_deepslate_slab': { input: { 'cobbled_deepslate': 3 }, output: 6 },

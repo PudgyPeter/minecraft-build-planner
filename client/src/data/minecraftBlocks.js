@@ -1,3 +1,5 @@
+import { getBlockDisplay } from './blockImages.js';
+
 export const minecraftBlocks = [
   // Wood Blocks - ALL variants
   { name: 'oak_planks', displayName: 'Oak Planks', category: 'Wood' },
