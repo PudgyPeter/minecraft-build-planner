@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Calculator, TrendingUp, Clock, Package, DollarSign, X } from 'lucide-react';
+import { Calculator, TrendingUp, Clock, Package, DollarSign, X, ArrowRight } from 'lucide-react';
 import BlockIcon from './BlockIcon';
 
 // Crafting recipes database
