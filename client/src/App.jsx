@@ -193,15 +193,30 @@ function AppContent() {
       />
       
       <div className="flex-1 flex flex-col">
-        <div className="p-4 border-b border-gray-800 flex items-center justify-between">
-          <BackupStatus />
-          <ThemeToggle />
+        {/* Header */}
+        <div className="h-16 border-b border-gray-800 flex items-center justify-between px-6 bg-gray-800/50 backdrop-blur-sm">
+          <div className="flex items-center gap-4">
+            <h1 className="text-xl font-bold text-white">
+              {selectedProject ? selectedProject.name : 'Minecraft Build Planner'}
+            </h1>
+            {selectedProject && (
+              <span className="text-sm text-gray-400">
+                {materials.length} materials
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-4">
+            <BackupStatus />
+            <ThemeToggle />
+          </div>
         </div>
         
-        <div className="flex-1 flex">
+        {/* Main Content */}
+        <div className="flex-1 flex overflow-hidden">
           {selectedProject ? (
             <>
-              <div className="flex-1 flex">
+              {/* Main Content Area */}
+              <div className="flex-1 flex overflow-hidden">
                 <MaterialChecklist
                   project={selectedProject}
                   materials={materials}
@@ -217,7 +232,8 @@ function AppContent() {
                 />
               </div>
               
-              <div className="w-80 border-l border-gray-700 p-4">
+              {/* Sidebar */}
+              <div className="w-80 border-l border-gray-700 bg-gray-800/30 backdrop-blur-sm overflow-hidden">
                 <FavoritesPanel 
                   onAddMaterial={handleAddMaterial}
                   onSearch={setSearchQuery}
@@ -225,7 +241,7 @@ function AppContent() {
               </div>
             </>
           ) : (
-            <div className="flex-1 p-6 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto">
               <ProjectDashboard projects={projects} materials={[]} />
             </div>
           )}

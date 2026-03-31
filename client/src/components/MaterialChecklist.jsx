@@ -139,66 +139,69 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
   }
 
   return (
-    <div className="flex-1 bg-gray-900 flex flex-col">
-      <div className="p-4 border-b border-gray-700 bg-gradient-to-r from-gray-800 to-gray-900">
-        <div className="flex items-center justify-between mb-4">
+    <div className="flex-1 bg-gray-900 flex flex-col overflow-hidden">
+      {/* Header */}
+      <div className="p-6 border-b border-gray-800 bg-gray-800/30 backdrop-blur-sm">
+        {/* Progress Bar */}
+        <div className="mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-gray-300">Progress</span>
+            <span className="text-sm text-gray-400">{collectedMaterials}/{totalMaterials}</span>
+          </div>
+          <div className="w-full bg-gray-700 rounded-full h-2">
+            <div 
+              className="bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Package className="text-green-500" size={24} />
-            <h2 className="text-2xl font-bold text-white">{project.name}</h2>
+            <h2 className="text-xl font-bold text-white">Materials</h2>
+            <span className="text-sm text-gray-400 bg-gray-700 px-2 py-1 rounded">
+              {totalMaterials} items
+            </span>
           </div>
-          <div className="flex gap-2">
+          
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setShowQuickSearch(true)}
-              className="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-all transform hover:scale-105 shadow-lg"
+              className="bg-yellow-600 hover:bg-yellow-700 text-white p-2 rounded-lg transition-all transform hover:scale-105 shadow-lg"
               title="Quick Add Materials"
             >
               <Zap size={16} />
             </button>
             <button
               onClick={() => setShowCostEstimator(true)}
-              className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-all transform hover:scale-105 shadow-lg"
+              className="bg-purple-600 hover:bg-purple-700 text-white p-2 rounded-lg transition-all transform hover:scale-105 shadow-lg"
               title="Cost Analysis"
             >
               <TrendingUp size={16} />
             </button>
             <button
               onClick={() => setShowBaseMaterials(true)}
-              className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-all transform hover:scale-105 shadow-lg"
+              className="bg-orange-600 hover:bg-orange-700 text-white p-2 rounded-lg transition-all transform hover:scale-105 shadow-lg"
               title="Base Materials Calculator"
             >
               <ArrowDown size={16} />
             </button>
             <button
               onClick={() => setShowTemplates(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-all transform hover:scale-105 shadow-lg"
+              className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition-all transform hover:scale-105 shadow-lg"
               title="Project Templates"
             >
               <FileText size={16} />
             </button>
-            <button
-              onClick={() => onSaveTemplate(project.id)}
-              className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all transform hover:scale-105 shadow-lg"
-            >
-              Save as Template
-            </button>
           </div>
         </div>
-        
-        <div className="mb-4">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-gray-300">Progress</span>
-            <span className="text-sm font-bold text-white">{collectedMaterials} / {totalMaterials}</span>
-          </div>
-          <div className="w-full bg-gray-700 rounded-full h-3 overflow-hidden">
-            <div
-              className="bg-gradient-to-r from-green-500 to-green-400 h-3 rounded-full transition-all duration-500 shadow-lg"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-          <div className="text-xs text-gray-400 mt-1">{Math.round(progress)}% Complete</div>
-        </div>
-
-        <div className="flex gap-2 mb-4">
+      </div>
+      
+      {/* Filter Tabs */}
+      <div className="px-6 py-3 border-b border-gray-800 bg-gray-800/20">
+        <div className="flex gap-2">
           <button
             onClick={() => setFilter('all')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all transform hover:scale-105 ${
@@ -230,11 +233,15 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
             Collected ({collectedMaterials})
           </button>
         </div>
+      </div>
 
-        <div className="bg-gray-900 p-4 rounded-lg border border-gray-700">
-          <div className="flex gap-2 items-end">
+        {/* Content Area */}
+      <div className="flex-1 overflow-hidden flex flex-col">
+        {/* Add Material Form */}
+        <div className="p-6 border-b border-gray-800 bg-gray-800/20">
+          <div className="flex gap-3 items-end">
             <div className="flex-1">
-              <label className="block text-xs font-medium text-gray-400 mb-1">Material Name</label>
+              <label className="block text-xs font-medium text-gray-400 mb-2">Add Material</label>
               <AutocompleteInput
                 value={newMaterial.name}
                 onChange={(value) => setNewMaterial({ ...newMaterial, name: value })}
@@ -271,21 +278,12 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
             </button>
           </div>
         </div>
-      </div>
+          </div>
+        </div>
 
-      {/* Bulk Operations */}
-      <div className="p-4 border-b border-gray-700">
-        <BulkOperations
-          materials={materials}
-          onBulkUpdate={handleBulkUpdate}
-          onBulkDelete={handleBulkDelete}
-          onBulkExport={handleBulkExport}
-          onBulkImport={handleBulkImport}
-        />
-      </div>
-
-      <div className="flex-1 overflow-y-auto p-4 bg-gray-900">
-        {Object.entries(groupedMaterials).map(([category, items]) => (
+        {/* Materials List */}
+        <div className="flex-1 overflow-y-auto p-6 bg-gray-900/50">
+          {Object.entries(groupedMaterials).map(([category, items]) => (
           <div key={category} className="mb-4">
             <h3 className="text-gray-400 font-semibold mb-2">{category}</h3>
             <div className="space-y-2">
@@ -459,6 +457,8 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
           onClose={() => setShowBaseMaterials(false)}
         />
       )}
+        </div>
+      </div>
     </div>
   );
 }
