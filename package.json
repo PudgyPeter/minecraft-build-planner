@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon server/index.js",
     "start": "node server/index.js",
-    "build": "cd client && npm ci && npm run build",
+    "build": "cd client && npm ci && npm run build && echo '✅ Build completed' && ls -la dist",
     "postinstall": "prisma generate",
     "migrate": "prisma migrate deploy",
     "migrate:dev": "prisma migrate dev",

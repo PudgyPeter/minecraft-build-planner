@@ -30,10 +30,22 @@ app.use('/api/calculate', calculatorRoutes);
 
 if (isProduction) {
   const clientPath = path.join(__dirname, '../client/dist');
+  console.log(`📁 Serving static files from: ${clientPath}`);
+  
   app.use(express.static(clientPath));
   
   app.get('*', (req, res) => {
-    res.sendFile(path.join(clientPath, 'index.html'));
+    const indexPath = path.join(clientPath, 'index.html');
+    console.log(`🏠 Serving index.html from: ${indexPath}`);
+    res.sendFile(indexPath);
+  });
+} else {
+  app.get('/', (req, res) => {
+    res.json({ 
+      message: '🚂 Minecraft Build Planner API',
+      environment: 'development',
+      timestamp: new Date().toISOString()
+    });
   });
 }
 
