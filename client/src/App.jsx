@@ -6,6 +6,7 @@ import BackupStatus from './components/BackupStatus';
 import ProjectDashboard from './components/ProjectDashboard';
 import FavoritesPanel from './components/FavoritesPanel';
 import ThemeToggle from './components/ThemeToggle';
+import BlueprintBuilder from './components/BlueprintBuilder';
 import { ToastProvider, useToast } from './components/ToastContainer';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useTheme } from './hooks/useTheme';
@@ -16,6 +17,7 @@ function AppContent() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [materials, setMaterials] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState('materials');
   const { toggleTheme } = useTheme();
   const toast = useToast();
 
@@ -211,38 +213,73 @@ function AppContent() {
           </div>
         </div>
         
+        {/* Tab Bar */}
+        {selectedProject && (
+          <div className="px-6 border-b border-gray-800 bg-gray-800/30 flex gap-1">
+            <button
+              onClick={() => setActiveTab('materials')}
+              className={`px-4 py-2.5 text-sm font-medium transition-all border-b-2 ${
+                activeTab === 'materials'
+                  ? 'text-green-400 border-green-400'
+                  : 'text-gray-400 border-transparent hover:text-gray-200'
+              }`}
+            >
+              Materials
+            </button>
+            <button
+              onClick={() => setActiveTab('blueprint')}
+              className={`px-4 py-2.5 text-sm font-medium transition-all border-b-2 ${
+                activeTab === 'blueprint'
+                  ? 'text-blue-400 border-blue-400'
+                  : 'text-gray-400 border-transparent hover:text-gray-200'
+              }`}
+            >
+              Blueprint Builder
+            </button>
+          </div>
+        )}
+        
         {/* Main Content */}
         <div className="flex-1 flex overflow-hidden">
           {selectedProject ? (
             <>
-              {/* Main Content Area */}
-              <div className="flex-1 flex overflow-hidden" style={{ minWidth: 0 }}>
-                <div className="flex-1 overflow-hidden" style={{ minWidth: 0 }}>
-                  <MaterialChecklist
-                    project={selectedProject}
-                    materials={materials}
-                    onAdd={handleAddMaterial}
-                    onUpdate={handleUpdateMaterial}
-                    onDelete={handleDeleteMaterial}
-                    onSaveTemplate={handleSaveTemplate}
-                  />
-                </div>
-                
-                <div className="w-80 shrink-0">
-                  <Calculator
-                    project={selectedProject}
-                    onAddToProject={handleAddFromCalculator}
-                  />
-                </div>
-              </div>
-              
-              {/* Sidebar */}
-              <div className="w-80 border-l border-gray-700 bg-gray-800/30 backdrop-blur-sm overflow-hidden shrink-0">
-                <FavoritesPanel 
-                  onAddMaterial={handleAddMaterial}
-                  onSearch={setSearchQuery}
+              {activeTab === 'materials' ? (
+                <>
+                  {/* Main Content Area */}
+                  <div className="flex-1 flex overflow-hidden" style={{ minWidth: 0 }}>
+                    <div className="flex-1 overflow-hidden" style={{ minWidth: 0 }}>
+                      <MaterialChecklist
+                        project={selectedProject}
+                        materials={materials}
+                        onAdd={handleAddMaterial}
+                        onUpdate={handleUpdateMaterial}
+                        onDelete={handleDeleteMaterial}
+                        onSaveTemplate={handleSaveTemplate}
+                      />
+                    </div>
+                    
+                    <div className="w-80 shrink-0">
+                      <Calculator
+                        project={selectedProject}
+                        onAddToProject={handleAddFromCalculator}
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Sidebar */}
+                  <div className="w-80 border-l border-gray-700 bg-gray-800/30 backdrop-blur-sm overflow-hidden shrink-0">
+                    <FavoritesPanel 
+                      onAddMaterial={handleAddMaterial}
+                      onSearch={setSearchQuery}
+                    />
+                  </div>
+                </>
+              ) : (
+                <BlueprintBuilder
+                  project={selectedProject}
+                  onAddToProject={handleAddFromCalculator}
                 />
-              </div>
+              )}
             </>
           ) : (
             <div className="flex-1 overflow-y-auto">

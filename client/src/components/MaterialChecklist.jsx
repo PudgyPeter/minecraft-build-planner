@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Trash2, Check, X, Package, Search, Filter, Star, Calculator, TrendingUp, Zap, FileText, ArrowDown, Grid } from 'lucide-react';
+import { Plus, Trash2, Check, X, Package, Search, Filter, Star, Calculator, TrendingUp, Zap, FileText, ArrowDown, Grid, MessageSquare, Save } from 'lucide-react';
 import AutocompleteInput from './AutocompleteInput';
 import BulkOperations from './BulkOperations';
 import CraftingCalculator from './CraftingCalculator';
@@ -21,6 +21,8 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
   const [showBaseMaterials, setShowBaseMaterials] = useState(false);
   const [showCraftingGrid, setShowCraftingGrid] = useState(false);
   const [selectedCraftingItem, setSelectedCraftingItem] = useState(null);
+  const [editingNotes, setEditingNotes] = useState(null);
+  const [noteText, setNoteText] = useState('');
   const { addFavorite, removeFavorite, isFavorite } = useFavorites();
 
   const handleAdd = () => {
@@ -355,7 +357,66 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
                             className={isFavorite(material.name) ? 'text-yellow-500 fill-yellow-500' : 'text-gray-400'}
                           />
                         </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (editingNotes === material.id) {
+                              setEditingNotes(null);
+                            } else {
+                              setEditingNotes(material.id);
+                              setNoteText(material.notes || '');
+                            }
+                          }}
+                          className="p-1 hover:bg-gray-700 rounded transition-all transform hover:scale-110"
+                          title="Add/edit notes"
+                        >
+                          <MessageSquare 
+                            size={14} 
+                            className={material.notes ? 'text-amber-400 fill-amber-400/20' : 'text-gray-400'}
+                          />
+                        </button>
                       </div>
+                      {/* Inline note display */}
+                      {material.notes && editingNotes !== material.id && (
+                        <div className="ml-10 mt-1">
+                          <p className="text-xs text-amber-300/70 italic truncate max-w-md">📝 {material.notes}</p>
+                        </div>
+                      )}
+                      {/* Inline note editor */}
+                      {editingNotes === material.id && (
+                        <div className="ml-10 mt-2 flex gap-2" onClick={(e) => e.stopPropagation()}>
+                          <input
+                            type="text"
+                            value={noteText}
+                            onChange={(e) => setNoteText(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                onUpdate(material.id, { notes: noteText || null });
+                                setEditingNotes(null);
+                              }
+                              if (e.key === 'Escape') setEditingNotes(null);
+                            }}
+                            placeholder="e.g. Found in mesa biome, need to smelt..."
+                            className="flex-1 bg-gray-700 text-white text-sm px-3 py-1.5 rounded border border-gray-600 focus:border-amber-500 outline-none"
+                            autoFocus
+                          />
+                          <button
+                            onClick={() => {
+                              onUpdate(material.id, { notes: noteText || null });
+                              setEditingNotes(null);
+                            }}
+                            className="bg-amber-600 hover:bg-amber-700 text-white px-2 py-1 rounded text-xs"
+                          >
+                            <Save size={14} />
+                          </button>
+                          <button
+                            onClick={() => setEditingNotes(null)}
+                            className="bg-gray-600 hover:bg-gray-500 text-white px-2 py-1 rounded text-xs"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      )}
                     </div>
                     
                     <div className="flex items-center gap-3">

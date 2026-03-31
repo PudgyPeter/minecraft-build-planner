@@ -21,6 +21,7 @@ model Material {
   quantity  Int
   collected Boolean  @default(false)
   category  String?
+  notes     String?
   project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([projectId])

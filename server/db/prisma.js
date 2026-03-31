@@ -43,6 +43,14 @@ async function initializeDatabase() {
     // Test if database is initialized by checking if we can query
     const count = await prisma.project.count();
     console.log(`📊 Database initialized, found ${count} projects`);
+    
+    // Auto-migrate: add notes column if it doesn't exist
+    try {
+      await prisma.$executeRawUnsafe(`ALTER TABLE "Material" ADD COLUMN "notes" TEXT`);
+      console.log('✅ Added notes column to Material table');
+    } catch (e) {
+      // Column already exists, ignore
+    }
   } catch (error) {
     console.error('❌ Database connection error:', error);
     
@@ -78,6 +86,7 @@ async function initializeDatabase() {
             "quantity" INTEGER NOT NULL,
             "category" TEXT NOT NULL,
             "collected" BOOLEAN NOT NULL DEFAULT FALSE,
+            "notes" TEXT,
             FOREIGN KEY ("projectId") REFERENCES "Project" ("id") ON DELETE CASCADE ON UPDATE CASCADE
           )`;
           
