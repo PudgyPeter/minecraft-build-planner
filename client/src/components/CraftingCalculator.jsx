@@ -27,6 +27,11 @@ const craftingRecipes = {
   'stripped_cherry_log': { input: { 'cherry_log': 1 }, output: 1 },
   'stripped_pale_oak_log': { input: { 'pale_oak_log': 1 }, output: 1 },
   
+  // Stripped stems (nether wood variants)
+  'stripped_crimson_stem': { input: { 'crimson_stem': 1 }, output: 1 },
+  'stripped_warped_stem': { input: { 'warped_stem': 1 }, output: 1 },
+  'stripped_bamboo_block': { input: { 'bamboo_block': 1 }, output: 1 },
+  
   // Sticks
   'stick': { input: { 'oak_planks': 2 }, output: 4 },
   
@@ -35,6 +40,18 @@ const craftingRecipes = {
   'stone_slab': { input: { 'stone': 3 }, output: 6 },
   'cobblestone_stairs': { input: { 'cobblestone': 6 }, output: 4 },
   'cobblestone_slab': { input: { 'cobblestone': 3 }, output: 6 },
+  
+  // Andesite variants
+  'andesite_stairs': { input: { 'andesite': 6 }, output: 4 },
+  'andesite_slab': { input: { 'andesite': 3 }, output: 6 },
+  
+  // Diorite variants
+  'diorite_stairs': { input: { 'diorite': 6 }, output: 4 },
+  'diorite_slab': { input: { 'diorite': 3 }, output: 6 },
+  
+  // Granite variants
+  'granite_stairs': { input: { 'granite': 6 }, output: 4 },
+  'granite_slab': { input: { 'granite': 3 }, output: 6 },
   
   // Polished stone variants
   'polished_andesite_stairs': { input: { 'polished_andesite': 6 }, output: 4 },
