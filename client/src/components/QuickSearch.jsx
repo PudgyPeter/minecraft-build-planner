@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Search, Filter, Tag, X, Zap } from 'lucide-react';
 import { minecraftBlocks } from '../data/minecraftBlocks';
-import { getBlockIcon } from '../data/minecraftBlocks';
+import BlockIcon from './BlockIcon';
 
 export default function QuickSearch({ onAddMaterial, onClose }) {
   const [query, setQuery] = useState('');
@@ -136,7 +136,12 @@ export default function QuickSearch({ onAddMaterial, onClose }) {
                     className="bg-gray-700 hover:bg-gray-600 rounded-lg p-3 transition-all transform hover:scale-105"
                     title={block.displayName}
                   >
-                    <div className="text-2xl mb-1">{getBlockIcon(block.name)}</div>
+                    <div className="mb-1">
+                      <BlockIcon 
+                        blockName={block.name}
+                        size={32}
+                      />
+                    </div>
                     <div className="text-xs text-gray-300 truncate">{block.displayName}</div>
                   </button>
                 ))}
@@ -175,7 +180,10 @@ export default function QuickSearch({ onAddMaterial, onClose }) {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <span className="text-xl">{getBlockIcon(block.name)}</span>
+                        <BlockIcon 
+                          blockName={block.name}
+                          size={20}
+                        />
                         <div>
                           <div className="text-white font-medium">{block.displayName}</div>
                           <div className="text-gray-400 text-sm">{block.category.replace(/_/g, ' ')}</div>

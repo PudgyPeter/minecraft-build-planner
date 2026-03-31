@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Package, ArrowDown, TreeTrunk, Pickaxe, X, Info } from 'lucide-react';
-import { getBlockIcon } from '../data/minecraftBlocks';
+import BlockIcon from './BlockIcon';
 
 // Comprehensive crafting recipes database
 const craftingRecipes = {
@@ -468,7 +468,10 @@ export default function BaseMaterialsCalculator({ materials, onClose }) {
                       .map(([materialName, quantity]) => (
                         <div key={materialName} className="flex items-center justify-between bg-gray-700 rounded-lg p-3">
                           <div className="flex items-center gap-3">
-                            <span className="text-xl">{getBlockIcon(materialName)}</span>
+                            <BlockIcon 
+                              blockName={materialName}
+                              size={20}
+                            />
                             <span className="text-white capitalize">
                               {materialName.replace(/_/g, ' ')}
                             </span>
@@ -490,7 +493,10 @@ export default function BaseMaterialsCalculator({ materials, onClose }) {
                 {sortedMaterials.map(([materialName, quantity]) => (
                   <div key={materialName} className="flex items-center justify-between bg-gray-700 rounded-lg p-3">
                     <div className="flex items-center gap-3">
-                      <span className="text-xl">{getBlockIcon(materialName)}</span>
+                      <BlockIcon 
+                        blockName={materialName}
+                        size={20}
+                      />
                       <span className="text-white capitalize">
                         {materialName.replace(/_/g, ' ')}
                       </span>

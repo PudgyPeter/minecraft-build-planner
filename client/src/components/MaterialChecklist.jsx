@@ -7,8 +7,8 @@ import MaterialCostEstimator from './MaterialCostEstimator';
 import QuickSearch from './QuickSearch';
 import ProjectTemplates from './ProjectTemplates';
 import BaseMaterialsCalculator from './BaseMaterialsCalculator';
+import BlockIcon from './BlockIcon';
 import { useFavorites } from '../hooks/useFavorites';
-import { getBlockIcon } from '../data/minecraftBlocks';
 
 export default function MaterialChecklist({ project, materials, onAdd, onUpdate, onDelete, onSaveTemplate }) {
   const [newMaterial, setNewMaterial] = useState({ name: '', quantity: '', category: '' });
@@ -315,7 +315,10 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
                         {material.collected && <Check size={16} className="text-white" />}
                       </button>
                       <div className="flex items-center gap-2">
-                        <span className="text-xl">{getBlockIcon(material.name.toLowerCase().replace(/\s+/g, '_'))}</span>
+                        <BlockIcon 
+                          blockName={material.name.toLowerCase().replace(/\s+/g, '_')} 
+                          size={20}
+                        />
                         <span className={`text-white font-medium ${material.collected ? 'line-through text-gray-500' : ''}`}>
                           {material.name}
                         </span>

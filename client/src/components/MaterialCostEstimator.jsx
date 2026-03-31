@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Calculator, TrendingUp, Clock, Package, DollarSign, X } from 'lucide-react';
-import { getBlockIcon } from '../data/minecraftBlocks';
+import BlockIcon from './BlockIcon';
 
 // Rough time estimates (in seconds) for gathering/crafting
 const timeEstimates = {
@@ -290,19 +290,22 @@ export default function MaterialCostEstimator({ materials, onClose }) {
               <h4 className="text-white font-semibold mb-4">Most Time-Consuming Items</h4>
               <div className="space-y-2">
                 {sortedTimeBreakdown.map(([materialName, time]) => (
-                  <div key={materialName} className="flex items-center justify-between bg-gray-700 rounded-lg p-3">
-                    <div className="flex items-center gap-3">
-                      <span className="text-xl">{getBlockIcon(materialName)}</span>
-                      <span className="text-white capitalize">
-                        {materialName.replace(/_/g, ' ')}
-                      </span>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-white font-bold">{formatTime(time)}</div>
-                      <div className="text-gray-400 text-sm">{Math.round((time / timeAnalysis.totalTime) * 100)}%</div>
-                    </div>
+                <div key={materialName} className="flex items-center justify-between bg-gray-700 rounded-lg p-3">
+                  <div className="flex items-center gap-3">
+                    <BlockIcon 
+                      blockName={materialName}
+                      size={20}
+                    />
+                    <span className="text-white capitalize">
+                      {materialName.replace(/_/g, ' ')}
+                    </span>
                   </div>
-                ))}
+                  <div className="text-right">
+                    <div className="text-white font-bold">{formatTime(time)}</div>
+                    <div className="text-gray-400 text-sm">{Math.round((time / timeAnalysis.totalTime) * 100)}%</div>
+                  </div>
+                </div>
+              ))}
               </div>
               
               <div className="mt-6 p-4 bg-blue-600/20 border border-blue-600 rounded-lg">
@@ -320,7 +323,10 @@ export default function MaterialCostEstimator({ materials, onClose }) {
                 {sortedCostBreakdown.map(([materialName, cost]) => (
                   <div key={materialName} className="flex items-center justify-between bg-gray-700 rounded-lg p-3">
                     <div className="flex items-center gap-3">
-                      <span className="text-xl">{getBlockIcon(materialName)}</span>
+                      <BlockIcon 
+                        blockName={materialName}
+                        size={20}
+                      />
                       <span className="text-white capitalize">
                         {materialName.replace(/_/g, ' ')}
                       </span>

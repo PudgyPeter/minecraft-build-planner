@@ -1,5 +1,6 @@
-import { X, Package, ArrowRight } from 'lucide-react';
-import { getBlockIcon } from '../data/minecraftBlocks';
+import { useState } from 'react';
+import { Calculator, TrendingUp, Clock, Package, DollarSign, X } from 'lucide-react';
+import BlockIcon from './BlockIcon';
 
 // Crafting recipes database
 const craftingRecipes = {
@@ -322,7 +323,10 @@ export default function CraftingCalculator({ material, onClose }) {
           
           <div className="mb-6">
             <div className="flex items-center gap-3 mb-4">
-              <span className="text-2xl">{getBlockIcon(material.name.toLowerCase().replace(/\s+/g, '_'))}</span>
+              <BlockIcon 
+                blockName={material.name.toLowerCase().replace(/\s+/g, '_')} 
+                size={32}
+              />
               <div>
                 <h4 className="text-lg font-semibold text-white">{material.name}</h4>
                 <p className="text-gray-400">Quantity needed: {material.quantity}</p>
@@ -357,7 +361,10 @@ export default function CraftingCalculator({ material, onClose }) {
                   {Object.entries(calculation.materials).map(([materialName, amount]) => (
                     <div key={materialName} className="flex items-center justify-between bg-gray-700 rounded-lg p-3">
                       <div className="flex items-center gap-3">
-                        <span className="text-xl">{getBlockIcon(materialName)}</span>
+                        <BlockIcon 
+                          blockName={materialName}
+                          size={20}
+                        />
                         <span className="text-white capitalize">
                           {materialName.replace(/_/g, ' ')}
                         </span>
