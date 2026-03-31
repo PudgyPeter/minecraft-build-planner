@@ -1,10 +1,24 @@
 import { PrismaClient } from '@prisma/client';
 
 // Use PostgreSQL in production, SQLite fallback for development/issues
-const databaseUrl = process.env.DATABASE_URL || 'file:./dev.db';
 const isProduction = process.env.NODE_ENV === 'production';
+const hasDatabaseUrl = process.env.DATABASE_URL && process.env.DATABASE_URL.startsWith('postgresql://');
 
-console.log(`🗄️ Using database: ${isProduction ? 'PostgreSQL' : 'SQLite'}`);
+let databaseUrl, databaseProvider;
+
+if (hasDatabaseUrl) {
+  // Use PostgreSQL if DATABASE_URL is properly set
+  databaseUrl = process.env.DATABASE_URL;
+  databaseProvider = 'postgresql';
+  console.log(`🗄️ Using PostgreSQL database`);
+} else {
+  // Fallback to SQLite
+  databaseUrl = 'file:./dev.db';
+  databaseProvider = 'sqlite';
+  console.log(`🗄️ Using SQLite database (fallback)`);
+  console.log(`⚠️ DATABASE_URL not properly configured for PostgreSQL`);
+}
+
 console.log(`📡 Database URL: ${databaseUrl.replace(/\/\/.*@/, '//***@')}`);
 
 const prisma = new PrismaClient({
@@ -22,3 +36,4 @@ prisma.$connect()
   .catch(err => console.error('❌ Prisma connection error:', err));
 
 export default prisma;
+export { databaseProvider };

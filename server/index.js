@@ -4,7 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { optionalAuth } from './middleware/auth.js';
-import prisma from './db/prisma.js';
+import prisma, { databaseProvider } from './db/prisma.js';
 import projectRoutes from './routes/projects.js';
 import materialRoutes from './routes/materials.js';
 import templateRoutes from './routes/templates.js';
@@ -23,6 +23,8 @@ async function initializeDatabase() {
     console.log('🔄 Running database migrations...');
     
     try {
+      // Set DATABASE_PROVIDER for Prisma CLI
+      process.env.DATABASE_PROVIDER = databaseProvider;
       const { execSync } = await import('child_process');
       execSync('npx prisma migrate deploy', { stdio: 'inherit' });
       console.log('✅ Migrations completed');
