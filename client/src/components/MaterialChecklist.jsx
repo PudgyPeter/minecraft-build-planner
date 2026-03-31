@@ -139,7 +139,7 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
   }
 
   return (
-    <div className="flex-1 bg-gray-900 flex flex-col overflow-hidden">
+    <div className="flex-1 bg-gray-900 flex flex-col overflow-hidden" style={{ minWidth: 0, width: '100%' }}>
       {/* Header */}
       <div className="p-6 border-b border-gray-800 bg-gray-800/30 backdrop-blur-sm shrink-0">
         {/* Progress Bar */}

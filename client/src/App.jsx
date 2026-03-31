@@ -216,20 +216,24 @@ function AppContent() {
           {selectedProject ? (
             <>
               {/* Main Content Area */}
-              <div className="flex-1 flex overflow-hidden min-w-0">
-                <MaterialChecklist
-                  project={selectedProject}
-                  materials={materials}
-                  onAdd={handleAddMaterial}
-                  onUpdate={handleUpdateMaterial}
-                  onDelete={handleDeleteMaterial}
-                  onSaveTemplate={handleSaveTemplate}
-                />
+              <div className="flex-1 flex overflow-hidden" style={{ minWidth: 0 }}>
+                <div className="flex-1 overflow-hidden" style={{ minWidth: 0 }}>
+                  <MaterialChecklist
+                    project={selectedProject}
+                    materials={materials}
+                    onAdd={handleAddMaterial}
+                    onUpdate={handleUpdateMaterial}
+                    onDelete={handleDeleteMaterial}
+                    onSaveTemplate={handleSaveTemplate}
+                  />
+                </div>
                 
-                <Calculator
-                  project={selectedProject}
-                  onAddToProject={handleAddFromCalculator}
-                />
+                <div className="w-80 shrink-0">
+                  <Calculator
+                    project={selectedProject}
+                    onAddToProject={handleAddFromCalculator}
+                  />
+                </div>
               </div>
               
               {/* Sidebar */}

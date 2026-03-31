@@ -45,7 +45,7 @@ export default function FavoritesPanel({ onAddMaterial, onSearch }) {
   }
 
   return (
-    <div className="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+    <div className="p-4 bg-gray-800 border border-gray-700 rounded-lg overflow-hidden" style={{ minWidth: 0, width: '100%' }}>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-white font-semibold flex items-center gap-2">
           <Star className="text-yellow-500" size={20} />
