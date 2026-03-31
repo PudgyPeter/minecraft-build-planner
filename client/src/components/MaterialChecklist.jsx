@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Plus, Trash2, Check, X } from 'lucide-react';
+import { Plus, Trash2, Check, X, Package, Search, Filter } from 'lucide-react';
+import AutocompleteInput from './AutocompleteInput';
+import { getBlockIcon } from '../data/minecraftBlocks';
 
 export default function MaterialChecklist({ project, materials, onAdd, onUpdate, onDelete, onSaveTemplate }) {
   const [newMaterial, setNewMaterial] = useState({ name: '', quantity: '', category: '' });
@@ -52,85 +54,106 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
 
   return (
     <div className="flex-1 bg-gray-900 flex flex-col">
-      <div className="p-4 border-b border-gray-700">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-2xl font-bold text-white">{project.name}</h2>
+      <div className="p-4 border-b border-gray-700 bg-gradient-to-r from-gray-800 to-gray-900">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <Package className="text-green-500" size={24} />
+            <h2 className="text-2xl font-bold text-white">{project.name}</h2>
+          </div>
           <button
             onClick={() => onSaveTemplate(project.id)}
-            className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-sm transition"
+            className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all transform hover:scale-105 shadow-lg"
           >
             Save as Template
           </button>
         </div>
         
-        <div className="mb-3">
-          <div className="flex justify-between text-sm text-gray-400 mb-1">
-            <span>Progress</span>
-            <span>{collectedMaterials} / {totalMaterials}</span>
+        <div className="mb-4">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm font-medium text-gray-300">Progress</span>
+            <span className="text-sm font-bold text-white">{collectedMaterials} / {totalMaterials}</span>
           </div>
-          <div className="w-full bg-gray-700 rounded-full h-2">
+          <div className="w-full bg-gray-700 rounded-full h-3 overflow-hidden">
             <div
-              className="bg-green-500 h-2 rounded-full transition-all"
+              className="bg-gradient-to-r from-green-500 to-green-400 h-3 rounded-full transition-all duration-500 shadow-lg"
               style={{ width: `${progress}%` }}
             />
           </div>
+          <div className="text-xs text-gray-400 mt-1">{Math.round(progress)}% Complete</div>
         </div>
 
-        <div className="flex gap-2 mb-3">
+        <div className="flex gap-2 mb-4">
           <button
             onClick={() => setFilter('all')}
-            className={`px-3 py-1 rounded text-sm transition ${
-              filter === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300'
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all transform hover:scale-105 ${
+              filter === 'all' 
+                ? 'bg-blue-600 text-white shadow-lg' 
+                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
             }`}
           >
-            All
+            All ({totalMaterials})
           </button>
           <button
             onClick={() => setFilter('missing')}
-            className={`px-3 py-1 rounded text-sm transition ${
-              filter === 'missing' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300'
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all transform hover:scale-105 ${
+              filter === 'missing' 
+                ? 'bg-orange-600 text-white shadow-lg' 
+                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
             }`}
           >
-            Missing
+            Missing ({totalMaterials - collectedMaterials})
           </button>
           <button
             onClick={() => setFilter('collected')}
-            className={`px-3 py-1 rounded text-sm transition ${
-              filter === 'collected' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300'
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all transform hover:scale-105 ${
+              filter === 'collected' 
+                ? 'bg-green-600 text-white shadow-lg' 
+                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
             }`}
           >
-            Collected
+            Collected ({collectedMaterials})
           </button>
         </div>
 
-        <div className="flex gap-2">
-          <input
-            type="text"
-            placeholder="Material name"
-            value={newMaterial.name}
-            onChange={(e) => setNewMaterial({ ...newMaterial, name: e.target.value })}
-            className="flex-1 bg-gray-800 text-white px-3 py-2 rounded border border-gray-700 focus:border-blue-500 outline-none"
-          />
-          <input
-            type="number"
-            placeholder="Qty"
-            value={newMaterial.quantity}
-            onChange={(e) => setNewMaterial({ ...newMaterial, quantity: e.target.value })}
-            className="w-20 bg-gray-800 text-white px-3 py-2 rounded border border-gray-700 focus:border-blue-500 outline-none"
-          />
-          <input
-            type="text"
-            placeholder="Category"
-            value={newMaterial.category}
-            onChange={(e) => setNewMaterial({ ...newMaterial, category: e.target.value })}
-            className="w-32 bg-gray-800 text-white px-3 py-2 rounded border border-gray-700 focus:border-blue-500 outline-none"
-          />
-          <button
-            onClick={handleAdd}
-            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition"
-          >
-            <Plus size={20} />
-          </button>
+        <div className="bg-gray-900 p-4 rounded-lg border border-gray-700">
+          <div className="flex gap-2 items-end">
+            <div className="flex-1">
+              <label className="block text-xs font-medium text-gray-400 mb-1">Material Name</label>
+              <AutocompleteInput
+                value={newMaterial.name}
+                onChange={(value) => setNewMaterial({ ...newMaterial, name: value })}
+                placeholder="Search for a material..."
+                className="bg-gray-800"
+              />
+            </div>
+            <div className="w-24">
+              <label className="block text-xs font-medium text-gray-400 mb-1">Quantity</label>
+              <input
+                type="number"
+                placeholder="Qty"
+                value={newMaterial.quantity}
+                onChange={(e) => setNewMaterial({ ...newMaterial, quantity: e.target.value })}
+                className="w-full bg-gray-800 text-white px-3 py-2 rounded border border-gray-700 focus:border-blue-500 outline-none text-center"
+              />
+            </div>
+            <div className="w-32">
+              <label className="block text-xs font-medium text-gray-400 mb-1">Category</label>
+              <input
+                type="text"
+                placeholder="Category"
+                value={newMaterial.category}
+                onChange={(e) => setNewMaterial({ ...newMaterial, category: e.target.value })}
+                className="w-full bg-gray-800 text-white px-3 py-2 rounded border border-gray-700 focus:border-blue-500 outline-none"
+              />
+            </div>
+            <button
+              onClick={handleAdd}
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-all transform hover:scale-105 shadow-lg"
+              title="Add Material"
+            >
+              <Plus size={20} />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -142,52 +165,63 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
               {items.map(material => (
                 <div
                   key={material.id}
-                  className={`bg-gray-800 p-3 rounded border ${
-                    material.collected ? 'border-green-600' : 'border-gray-700'
+                  className={`bg-gray-800 p-3 rounded-lg border transition-all transform hover:scale-[1.02] ${
+                    material.collected 
+                      ? 'border-green-600 shadow-green-600/20 shadow-lg' 
+                      : 'border-gray-700 hover:border-gray-600'
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 flex-1">
                       <button
                         onClick={() => toggleCollected(material)}
-                        className={`w-6 h-6 rounded flex items-center justify-center transition ${
-                          material.collected ? 'bg-green-600' : 'bg-gray-700 hover:bg-gray-600'
+                        className={`w-7 h-7 rounded-full flex items-center justify-center transition-all transform hover:scale-110 ${
+                          material.collected 
+                            ? 'bg-gradient-to-r from-green-500 to-green-600 shadow-lg' 
+                            : 'bg-gray-700 hover:bg-gray-600'
                         }`}
                       >
                         {material.collected && <Check size={16} className="text-white" />}
                       </button>
-                      <span className={`text-white ${material.collected ? 'line-through text-gray-500' : ''}`}>
-                        {material.name}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">{getBlockIcon(material.name.toLowerCase().replace(/\s+/g, '_'))}</span>
+                        <span className={`text-white font-medium ${material.collected ? 'line-through text-gray-500' : ''}`}>
+                          {material.name}
+                        </span>
+                      </div>
                     </div>
                     
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       <div className="flex gap-1">
                         <button
                           onClick={() => incrementQuantity(material, 1)}
-                          className="bg-gray-700 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs transition"
+                          className="bg-gray-700 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs transition-all transform hover:scale-110"
+                          title="Add 1"
                         >
                           +1
                         </button>
                         <button
                           onClick={() => incrementQuantity(material, 10)}
-                          className="bg-gray-700 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs transition"
+                          className="bg-gray-700 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs transition-all transform hover:scale-110"
+                          title="Add 10"
                         >
                           +10
                         </button>
                         <button
                           onClick={() => incrementQuantity(material, 64)}
-                          className="bg-gray-700 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs transition"
+                          className="bg-gray-700 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs transition-all transform hover:scale-110"
+                          title="Add Stack"
                         >
                           +64
                         </button>
                       </div>
-                      <span className="text-white font-semibold w-16 text-center">
-                        {material.quantity}
-                      </span>
+                      <div className="bg-gray-700 px-3 py-1 rounded-lg min-w-[60px] text-center">
+                        <span className="text-white font-bold">{material.quantity}</span>
+                      </div>
                       <button
                         onClick={() => onDelete(material.id)}
-                        className="p-1 hover:bg-red-600 rounded transition"
+                        className="p-2 hover:bg-red-600 rounded-lg transition-all transform hover:scale-110"
+                        title="Delete Material"
                       >
                         <Trash2 size={16} className="text-red-400" />
                       </button>

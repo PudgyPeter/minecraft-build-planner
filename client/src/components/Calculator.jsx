@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { Calculator as CalcIcon, Plus } from 'lucide-react';
+import { Calculator as CalcIcon, Plus, Zap, Package } from 'lucide-react';
 import { calculate } from '../api';
+import AutocompleteInput from './AutocompleteInput';
+import { getBlockIcon } from '../data/minecraftBlocks';
 
 export default function Calculator({ project, onAddToProject }) {
   const [item, setItem] = useState('');
@@ -29,45 +31,51 @@ export default function Calculator({ project, onAddToProject }) {
   };
 
   return (
-    <div className="w-80 bg-gray-800 border-l border-gray-700 flex flex-col">
-      <div className="p-4 border-b border-gray-700">
+    <div className="w-80 bg-gradient-to-b from-gray-800 to-gray-900 border-l border-gray-700 flex flex-col">
+      <div className="p-4 border-b border-gray-700 bg-gradient-to-r from-blue-900 to-purple-900">
         <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
-          <CalcIcon size={20} />
-          Calculator
+          <Zap className="text-yellow-400" size={24} />
+          Crafting Calculator
         </h2>
         
         <div className="space-y-3">
-          <input
-            type="text"
-            placeholder="Item name (e.g., chest)"
-            value={item}
-            onChange={(e) => setItem(e.target.value)}
-            className="w-full bg-gray-900 text-white px-3 py-2 rounded border border-gray-700 focus:border-blue-500 outline-none"
-          />
+          <div>
+            <label className="block text-xs font-medium text-gray-300 mb-1">Item Name</label>
+            <AutocompleteInput
+              value={item}
+              onChange={setItem}
+              placeholder="Search for an item..."
+              className="bg-gray-900"
+            />
+          </div>
           
-          <input
-            type="number"
-            placeholder="Quantity"
-            value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
-            className="w-full bg-gray-900 text-white px-3 py-2 rounded border border-gray-700 focus:border-blue-500 outline-none"
-          />
+          <div>
+            <label className="block text-xs font-medium text-gray-300 mb-1">Quantity</label>
+            <input
+              type="number"
+              placeholder="How many?"
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+              className="w-full bg-gray-900 text-white px-3 py-2 rounded border border-gray-700 focus:border-blue-500 outline-none"
+            />
+          </div>
           
-          <label className="flex items-center gap-2 text-gray-300 text-sm">
+          <label className="flex items-center gap-2 text-gray-300 text-sm cursor-pointer hover:text-white transition">
             <input
               type="checkbox"
               checked={breakdown}
               onChange={(e) => setBreakdown(e.target.checked)}
-              className="rounded"
+              className="rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500"
             />
-            Show crafting steps
+            <span className="text-sm">Show crafting steps</span>
           </label>
           
           <button
             onClick={handleCalculate}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
+            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-all transform hover:scale-105 shadow-lg"
           >
-            Calculate
+            <CalcIcon size={16} className="inline mr-2" />
+            Calculate Materials
           </button>
         </div>
       </div>
@@ -90,25 +98,35 @@ export default function Calculator({ project, onAddToProject }) {
             
             <div className="space-y-2">
               {result.baseMaterials.map((mat, idx) => (
-                <div key={idx} className="bg-gray-900 p-2 rounded flex justify-between items-center">
-                  <span className="text-white">{mat.name}</span>
-                  <span className="text-gray-400 font-semibold">{mat.quantity}</span>
+                <div key={idx} className="bg-gray-900 p-3 rounded-lg flex justify-between items-center border border-gray-700 hover:border-gray-600 transition">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">{getBlockIcon(mat.name.toLowerCase().replace(/\s+/g, '_'))}</span>
+                    <span className="text-white font-medium">{mat.name}</span>
+                  </div>
+                  <span className="bg-blue-600 text-white px-3 py-1 rounded-lg font-bold text-sm">
+                    {mat.quantity}
+                  </span>
                 </div>
               ))}
             </div>
 
             {result.craftingSteps && result.craftingSteps.length > 0 && (
               <div className="mt-4">
-                <h3 className="text-white font-semibold mb-2">Crafting Steps</h3>
+                <h3 className="text-white font-semibold mb-2 flex items-center gap-2">
+                  <Package size={16} />
+                  Crafting Steps
+                </h3>
                 <div className="space-y-2">
                   {result.craftingSteps.map((step, idx) => (
-                    <div key={idx} className="bg-gray-900 p-2 rounded" style={{ marginLeft: `${step.depth * 12}px` }}>
-                      <div className="text-white text-sm">
+                    <div key={idx} className="bg-gray-900 p-3 rounded-lg border border-gray-700" style={{ marginLeft: `${step.depth * 16}px` }}>
+                      <div className="flex items-center gap-2 text-white text-sm font-medium">
+                        <span className="text-lg">{getBlockIcon(step.item.toLowerCase().replace(/\s+/g, '_'))}</span>
                         {step.item} x{step.quantity}
                       </div>
-                      <div className="text-gray-500 text-xs">
+                      <div className="text-gray-400 text-xs mt-1">
                         {Object.entries(step.ingredients).map(([ing, qty]) => (
-                          <span key={ing} className="mr-2">
+                          <span key={ing} className="mr-3 inline-flex items-center gap-1">
+                            <span>{getBlockIcon(ing.toLowerCase().replace(/\s+/g, '_'))}</span>
                             {ing}: {qty}
                           </span>
                         ))}
