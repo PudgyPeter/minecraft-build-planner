@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon server/index.js",
     "start": "node server/index.js",
-    "build": "cd client && npm ci && npm run build && echo '✅ Build completed' && ls -la dist",
+    "build": "npx prisma generate && cd client && npm ci && npm run build && echo '✅ Build completed' && ls -la dist",
     "postinstall": "prisma generate",
     "migrate": "prisma migrate deploy",
     "migrate:dev": "prisma migrate dev",
@@ -19,11 +19,11 @@
   "dependencies": {
     "express": "^4.18.2",
     "cors": "^2.8.5",
-    "@prisma/client": "^5.9.1",
+    "@prisma/client": "^5.22.0",
     "dotenv": "^16.4.1"
   },
   "devDependencies": {
-    "prisma": "^5.9.1",
+    "prisma": "^5.22.0",
     "nodemon": "^3.0.3"
   }
 }

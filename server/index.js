@@ -4,12 +4,43 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { optionalAuth } from './middleware/auth.js';
+import { PrismaClient } from '@prisma/client';
 import projectRoutes from './routes/projects.js';
 import materialRoutes from './routes/materials.js';
 import templateRoutes from './routes/templates.js';
 import calculatorRoutes from './routes/calculator.js';
 
 dotenv.config();
+
+// Initialize Prisma Client
+const prisma = new PrismaClient();
+
+// Initialize database
+async function initializeDatabase() {
+  try {
+    console.log('🔍 Checking database connection...');
+    await prisma.$connect();
+    console.log('✅ Database connected successfully');
+    
+    // Test database by creating a simple query
+    const projectCount = await prisma.project.count();
+    console.log(`📊 Found ${projectCount} projects in database`);
+  } catch (error) {
+    console.error('❌ Database initialization error:', error);
+    console.log('🔄 Attempting to run migrations...');
+    
+    try {
+      const { execSync } = await import('child_process');
+      execSync('npx prisma migrate deploy', { stdio: 'inherit' });
+      console.log('✅ Migrations completed, retrying connection...');
+      await prisma.$connect();
+      console.log('✅ Database connected after migrations');
+    } catch (migrationError) {
+      console.error('❌ Migration failed:', migrationError.message);
+      // Don't exit, let the app try to run anyway
+    }
+  }
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,6 +53,25 @@ app.use(cors());
 app.use(express.json());
 
 app.use(optionalAuth);
+
+// Health check endpoint
+app.get('/api/health', async (req, res) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({ 
+      status: 'healthy', 
+      database: 'connected',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      status: 'unhealthy', 
+      database: 'disconnected',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
 
 app.use('/api/projects', projectRoutes);
 app.use('/api/materials', materialRoutes);
@@ -49,7 +99,15 @@ if (isProduction) {
   });
 }
 
-app.listen(PORT, () => {
-  console.log(`🚂 Server running on port ${PORT}`);
-  console.log(`📦 Environment: ${isProduction ? 'production' : 'development'}`);
-});
+// Start server after database initialization
+async function startServer() {
+  await initializeDatabase();
+  
+  app.listen(PORT, () => {
+    console.log(`🚂 Server running on port ${PORT}`);
+    console.log(`📦 Environment: ${isProduction ? 'production' : 'development'}`);
+    console.log(`🗄️ Database: ${process.env.DATABASE_URL ? 'PostgreSQL' : 'SQLite'}`);
+  });
+}
+
+startServer().catch(console.error);
