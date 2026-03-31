@@ -36,13 +36,13 @@ const craftingRecipes = {
   // Diorite (shapeless recipe)
   'diorite': {
     grid: [
-      ['cobblestone', null, 'nether_quartz'],
+      ['cobblestone', null, 'quartz'],
       [null, null, null],
       [null, null, null]
     ],
     output: { item: 'diorite', count: 2 },
     shapeless: true,
-    description: 'Shapeless: 2 Cobblestone + 1 Nether Quartz'
+    description: 'Shapeless: 2 Cobblestone + 1 Quartz'
   },
   
   // Andesite (shapeless recipe)
@@ -60,13 +60,13 @@ const craftingRecipes = {
   // Granite (shapeless recipe)
   'granite': {
     grid: [
-      ['diorite', null, 'nether_quartz'],
+      ['diorite', null, 'quartz'],
       [null, null, null],
       [null, null, null]
     ],
     output: { item: 'granite', count: 2 },
     shapeless: true,
-    description: 'Shapeless: 2 Diorite + 1 Nether Quartz'
+    description: 'Shapeless: 2 Diorite + 1 Quartz'
   },
   
   // Stairs (shapeless)

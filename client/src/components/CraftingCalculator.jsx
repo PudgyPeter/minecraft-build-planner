@@ -36,9 +36,9 @@ const craftingRecipes = {
   'stick': { input: { 'oak_planks': 2 }, output: 4 },
   
   // Base stone crafting recipes (from Minecraft Wiki)
-  'diorite': { input: { 'cobblestone': 2, 'nether_quartz': 1 }, output: 2 },
+  'diorite': { input: { 'cobblestone': 2, 'quartz': 1 }, output: 2 },
   'andesite': { input: { 'cobblestone': 2, 'diorite': 1 }, output: 2 },
-  'granite': { input: { 'diorite': 2, 'nether_quartz': 1 }, output: 2 },
+  'granite': { input: { 'diorite': 2, 'quartz': 1 }, output: 2 },
   
   // Stone variants
   'stone_stairs': { input: { 'stone': 6 }, output: 4 },

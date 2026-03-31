@@ -345,6 +345,7 @@ export const blockImages = {
   'redstone_ore': 'https://minecraft.wiki/images/Redstone_Ore_JE3_BE2.png',
   'lapis_ore': 'https://minecraft.wiki/images/Lapis_Lazuli_Ore_JE3_BE2.png',
   'nether_quartz_ore': 'https://minecraft.wiki/images/Nether_Quartz_Ore_JE2_BE1.png',
+  'quartz': 'https://minecraft.wiki/images/Quartz_JE2_BE1.png',
   'ancient_debris': 'https://minecraft.wiki/images/Ancient_Debris_JE2_BE1.png',
   
   // Raw materials
