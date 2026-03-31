@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Trash2, Check, X, Package, Search, Filter, Star, Calculator, TrendingUp, Zap, FileText, ArrowDown } from 'lucide-react';
+import { Plus, Trash2, Check, X, Package, Search, Filter, Star, Calculator, TrendingUp, Zap, FileText, ArrowDown, Grid3x3 } from 'lucide-react';
 import AutocompleteInput from './AutocompleteInput';
 import BulkOperations from './BulkOperations';
 import CraftingCalculator from './CraftingCalculator';
@@ -7,6 +7,7 @@ import MaterialCostEstimator from './MaterialCostEstimator';
 import QuickSearch from './QuickSearch';
 import ProjectTemplates from './ProjectTemplates';
 import BaseMaterialsCalculator from './BaseMaterialsCalculator';
+import CraftingGrid from './CraftingGrid';
 import BlockIcon from './BlockIcon';
 import { useFavorites } from '../hooks/useFavorites';
 
@@ -18,6 +19,8 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
   const [showQuickSearch, setShowQuickSearch] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [showBaseMaterials, setShowBaseMaterials] = useState(false);
+  const [showCraftingGrid, setShowCraftingGrid] = useState(false);
+  const [selectedCraftingItem, setSelectedCraftingItem] = useState(null);
   const { addFavorite, removeFavorite, isFavorite } = useFavorites();
 
   const handleAdd = () => {
@@ -331,6 +334,17 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
+                            setSelectedCraftingItem(material.name.toLowerCase().replace(/\s+/g, '_'));
+                            setShowCraftingGrid(true);
+                          }}
+                          className="p-1 hover:bg-purple-600 rounded transition-all transform hover:scale-110"
+                          title="View crafting recipe"
+                        >
+                          <Grid3x3 size={14} className="text-purple-400" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
                             isFavorite(material.name) ? removeFavorite(material.name) : addFavorite(material);
                           }}
                           className="p-1 hover:bg-gray-700 rounded transition-all transform hover:scale-110"
@@ -453,6 +467,23 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
         <BaseMaterialsCalculator
           materials={materials}
           onClose={() => setShowBaseMaterials(false)}
+        />
+      )}
+      
+      {/* Crafting Grid Modal */}
+      {showCraftingGrid && (
+        <CraftingGrid
+          item={selectedCraftingItem}
+          onClose={() => setShowCraftingGrid(false)}
+          onBlockClick={(blockName) => {
+            // Add the clicked block to materials
+            onAdd({
+              projectId: project.id,
+              name: blockName.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
+              quantity: 1,
+              category: 'General'
+            });
+          }}
         />
       )}
       </div>
