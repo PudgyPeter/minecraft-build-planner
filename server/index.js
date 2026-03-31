@@ -4,7 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { optionalAuth } from './middleware/auth.js';
-import prisma, { databaseProvider } from './db/prisma.js';
+import prisma from './db/prisma.js';
 import projectRoutes from './routes/projects.js';
 import materialRoutes from './routes/materials.js';
 import templateRoutes from './routes/templates.js';
@@ -15,19 +15,17 @@ dotenv.config();
 // Initialize database
 async function initializeDatabase() {
   try {
-    console.log('🔍 Testing database connection...');
+    console.log('🔍 Testing SQLite database connection...');
     const projectCount = await prisma.project.count();
     console.log(`📊 Database connected! Found ${projectCount} projects`);
   } catch (error) {
     console.error('❌ Database connection failed:', error.message);
-    console.log('🔄 Running database migrations...');
+    console.log('🔄 Running SQLite migrations...');
     
     try {
-      // Set DATABASE_PROVIDER for Prisma CLI
-      process.env.DATABASE_PROVIDER = databaseProvider;
       const { execSync } = await import('child_process');
       execSync('npx prisma migrate deploy', { stdio: 'inherit' });
-      console.log('✅ Migrations completed');
+      console.log('✅ SQLite migrations completed');
       
       // Test connection after migrations
       const count = await prisma.project.count();
