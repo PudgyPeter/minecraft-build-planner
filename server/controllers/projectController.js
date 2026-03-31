@@ -2,6 +2,7 @@ import prisma from '../db/prisma.js';
 
 export async function getProjects(req, res) {
   try {
+    console.log('📋 Fetching projects from database...');
     const projects = await prisma.project.findMany({
       include: {
         materials: true
@@ -10,8 +11,10 @@ export async function getProjects(req, res) {
         createdAt: 'desc'
       }
     });
+    console.log(`✅ Found ${projects.length} projects`);
     res.json(projects);
   } catch (error) {
+    console.error('❌ Error fetching projects:', error);
     res.status(500).json({ error: error.message });
   }
 }
@@ -19,14 +22,17 @@ export async function getProjects(req, res) {
 export async function createProject(req, res) {
   try {
     const { name } = req.body;
+    console.log('➕ Creating project:', name);
     const project = await prisma.project.create({
       data: { name },
       include: {
         materials: true
       }
     });
+    console.log('✅ Project created successfully:', project.id);
     res.status(201).json(project);
   } catch (error) {
+    console.error('❌ Error creating project:', error);
     res.status(500).json({ error: error.message });
   }
 }

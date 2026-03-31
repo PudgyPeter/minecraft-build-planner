@@ -68,6 +68,45 @@ app.get('/api/health', async (req, res) => {
   }
 });
 
+// Database test endpoint
+app.get('/api/test-db', async (req, res) => {
+  try {
+    console.log('🧪 Testing database write...');
+    
+    // Create a test project
+    const testProject = await prisma.project.create({
+      data: { name: 'Test Project - ' + Date.now() }
+    });
+    
+    console.log('✅ Test project created:', testProject.id);
+    
+    // Read it back
+    const projects = await prisma.project.findMany();
+    
+    // Delete the test project
+    await prisma.project.delete({
+      where: { id: testProject.id }
+    });
+    
+    console.log('🗑️ Test project deleted');
+    
+    res.json({ 
+      status: 'success', 
+      testProjectId: testProject.id,
+      totalProjects: projects.length,
+      message: 'Database write/read/delete test passed',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('❌ Database test failed:', error);
+    res.status(500).json({ 
+      status: 'error', 
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 app.use('/api/projects', projectRoutes);
 app.use('/api/materials', materialRoutes);
 app.use('/api/templates', templateRoutes);
