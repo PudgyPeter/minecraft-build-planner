@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Package, ArrowDown, Tree, Pickaxe, X, Info } from 'lucide-react';
+import { Package, ArrowDown, Trees, Pickaxe, X, Info } from 'lucide-react';
 import BlockIcon from './BlockIcon';
 
 // Comprehensive crafting recipes database
@@ -417,7 +417,7 @@ export default function BaseMaterialsCalculator({ materials, onClose }) {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div className="bg-gray-700 rounded-lg p-4">
               <div className="flex items-center gap-2 mb-2">
-                <Tree className="text-green-400" size={20} />
+                <Trees className="text-green-400" size={20} />
                 <span className="text-gray-300 text-sm">Wood Items</span>
               </div>
               <div className="text-2xl font-bold text-white">
