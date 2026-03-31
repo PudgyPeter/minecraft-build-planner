@@ -46,14 +46,64 @@ async function initializeDatabase() {
   } catch (error) {
     console.error('❌ Database connection error:', error);
     
-    if (error.message.includes('no such table')) {
+    if (error.message.includes('no such table') || error.message.includes('does not exist')) {
       console.log('🔄 Database exists but tables missing, running migrations...');
       try {
         const { execSync } = await import('child_process');
-        execSync('npx prisma migrate deploy', { stdio: 'inherit' });
+        // Set DATABASE_URL for the migration command
+        const env = { ...process.env, DATABASE_URL: databaseUrl };
+        execSync('npx prisma migrate deploy', { stdio: 'inherit', env });
         console.log('✅ Migrations completed');
+        
+        // Retry the connection test
+        const count = await prisma.project.count();
+        console.log(`📊 Database ready after migrations, found ${count} projects`);
       } catch (migrationError) {
         console.error('❌ Migration failed:', migrationError.message);
+        
+        // Try to create tables manually using Prisma client
+        console.log('🔧 Attempting to create database schema manually...');
+        try {
+          // This will fail if tables don't exist, but let's try a simple approach
+          await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS "Project" (
+            "id" TEXT NOT NULL PRIMARY KEY,
+            "name" TEXT NOT NULL,
+            "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+          )`;
+          
+          await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS "Material" (
+            "id" TEXT NOT NULL PRIMARY KEY,
+            "projectId" TEXT NOT NULL,
+            "name" TEXT NOT NULL,
+            "quantity" INTEGER NOT NULL,
+            "category" TEXT NOT NULL,
+            "collected" BOOLEAN NOT NULL DEFAULT FALSE,
+            FOREIGN KEY ("projectId") REFERENCES "Project" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+          )`;
+          
+          await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS "Template" (
+            "id" TEXT NOT NULL PRIMARY KEY,
+            "name" TEXT NOT NULL,
+            "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+          )`;
+          
+          await prisma.$executeRaw`CREATE TABLE IF NOT EXISTS "TemplateMaterial" (
+            "id" TEXT NOT NULL PRIMARY KEY,
+            "templateId" TEXT NOT NULL,
+            "name" TEXT NOT NULL,
+            "quantity" INTEGER NOT NULL,
+            "category" TEXT NOT NULL,
+            FOREIGN KEY ("templateId") REFERENCES "Template" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+          )`;
+          
+          console.log('✅ Database schema created manually');
+          
+          // Test connection again
+          const count = await prisma.project.count();
+          console.log(`📊 Database ready, found ${count} projects`);
+        } catch (manualError) {
+          console.error('❌ Manual schema creation failed:', manualError.message);
+        }
       }
     }
   }
@@ -62,3 +112,4 @@ async function initializeDatabase() {
 initializeDatabase();
 
 export default prisma;
+export { databaseUrl };

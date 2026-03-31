@@ -24,7 +24,10 @@ async function initializeDatabase() {
     
     try {
       const { execSync } = await import('child_process');
-      execSync('npx prisma migrate deploy', { stdio: 'inherit' });
+      // Get the database URL from the prisma module
+      const { databaseUrl } = await import('./db/prisma.js');
+      const env = { ...process.env, DATABASE_URL: databaseUrl };
+      execSync('npx prisma migrate deploy', { stdio: 'inherit', env });
       console.log('✅ SQLite migrations completed');
       
       // Test connection after migrations
