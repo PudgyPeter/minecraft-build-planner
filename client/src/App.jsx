@@ -7,7 +7,7 @@ import ProjectDashboard from './components/ProjectDashboard';
 import FavoritesPanel from './components/FavoritesPanel';
 import ThemeToggle from './components/ThemeToggle';
 import { ToastProvider, useToast } from './components/ToastContainer';
-import { useGlobalShortcuts } from './hooks/useKeyboardShortcuts';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { useTheme } from './hooks/useTheme';
 import * as api from './api';
 
@@ -19,17 +19,53 @@ function AppContent() {
   const { toggleTheme } = useTheme();
   const toast = useToast();
 
+  const handleCreateProject = async () => {
+    const name = prompt('Enter project name:');
+    if (name) {
+      try {
+        const project = await api.createProject(name);
+        setProjects([project, ...projects]);
+        setSelectedProject(project);
+        toast.success(`Project "${name}" created!`);
+      } catch (error) {
+        toast.error('Failed to create project');
+      }
+    }
+  };
+
   // Keyboard shortcuts
-  useGlobalShortcuts({
-    onCreateProject: handleCreateProject,
-    onSearch: (query) => setSearchQuery(query || ''),
-    onSave: () => {
-      toast.success('Project saved to backup');
-      // Trigger backup save
-      fetch('/api/backup/create', { method: 'POST' });
+  const shortcuts = {
+    newProject: {
+      key: 'n',
+      ctrl: true,
+      action: handleCreateProject,
+      enabled: !!handleCreateProject
     },
-    onToggleTheme: toggleTheme
-  });
+    search: {
+      key: 'f',
+      ctrl: true,
+      action: (query) => setSearchQuery(query || ''),
+      enabled: true
+    },
+    save: {
+      key: 's',
+      ctrl: true,
+      action: () => {
+        toast.success('Project saved to backup');
+        // Trigger backup save
+        fetch('/api/backup/create', { method: 'POST' });
+      },
+      enabled: true
+    },
+    toggleTheme: {
+      key: 'd',
+      ctrl: true,
+      action: toggleTheme,
+      enabled: !!toggleTheme
+    }
+  };
+
+  useKeyboardShortcuts(shortcuts);
 
   useEffect(() => {
     loadProjects();
@@ -60,20 +96,6 @@ function AppContent() {
       console.error('Failed to load materials:', error);
       toast.error('Failed to load materials');
       setMaterials([]);
-    }
-  };
-
-  const handleCreateProject = async () => {
-    const name = prompt('Enter project name:');
-    if (name) {
-      try {
-        const project = await api.createProject(name);
-        setProjects([project, ...projects]);
-        setSelectedProject(project);
-        toast.success(`Project "${name}" created!`);
-      } catch (error) {
-        toast.error('Failed to create project');
-      }
     }
   };
 
