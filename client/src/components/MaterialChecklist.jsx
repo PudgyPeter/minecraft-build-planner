@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Trash2, Check, X, Package, Search, Filter, Star, Calculator, TrendingUp, Zap, FileText, ArrowDown, Grid3x3 } from 'lucide-react';
+import { Plus, Trash2, Check, X, Package, Search, Filter, Star, Calculator, TrendingUp, Zap, FileText, ArrowDown, Grid } from 'lucide-react';
 import AutocompleteInput from './AutocompleteInput';
 import BulkOperations from './BulkOperations';
 import CraftingCalculator from './CraftingCalculator';
@@ -340,7 +340,7 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
                           className="p-1 hover:bg-purple-600 rounded transition-all transform hover:scale-110"
                           title="View crafting recipe"
                         >
-                          <Grid3x3 size={14} className="text-purple-400" />
+                          <Grid size={14} className="text-purple-400" />
                         </button>
                         <button
                           onClick={(e) => {

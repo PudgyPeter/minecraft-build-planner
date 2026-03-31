@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Grid3x3, ArrowRight, Package } from 'lucide-react';
+import { X, Grid, ArrowRight, Package } from 'lucide-react';
 import BlockIcon from './BlockIcon';
 
 // Visual crafting recipes with grid layouts
@@ -300,7 +300,7 @@ export default function CraftingGrid({ item, onClose, onBlockClick }) {
         <div className="bg-gray-800 rounded-xl border border-gray-700 p-6 max-w-md w-full mx-4">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xl font-bold text-white flex items-center gap-2">
-              <Grid3x3 size={20} />
+              <Grid size={20} />
               Crafting Recipe
             </h3>
             <button
@@ -328,7 +328,7 @@ export default function CraftingGrid({ item, onClose, onBlockClick }) {
       <div className="bg-gray-800 rounded-xl border border-gray-700 p-6 max-w-2xl w-full mx-4">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-bold text-white flex items-center gap-2">
-            <Grid3x3 size={20} />
+            <Grid size={20} />
             Crafting Recipe: {getDisplayName(item)}
           </h3>
           <button
