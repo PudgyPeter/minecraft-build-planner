@@ -1,13 +1,32 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="margin: 0; padding: 0; background-color: #111827; min-height: 100vh;">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Minecraft Build Planner</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html, body {
+        margin: 0;
+        padding: 0;
+        background-color: #111827;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+      #root {
+        width: 100vw;
+        min-height: 100vh;
+        background-color: #111827;
+      }
+    </style>
   </head>
-  <body>
-    <div id="root"></div>
+  <body style="margin: 0; padding: 0; background-color: #111827; min-height: 100vh;">
+    <div id="root" style="width: 100vw; min-height: 100vh; background-color: #111827;"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

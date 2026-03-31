@@ -182,7 +182,7 @@ function AppContent() {
   };
 
   return (
-    <div className="h-screen flex bg-gray-900">
+    <div className="min-h-screen w-screen flex bg-gray-900 overflow-hidden">
       <ProjectSidebar
         projects={projects}
         selectedProject={selectedProject}
