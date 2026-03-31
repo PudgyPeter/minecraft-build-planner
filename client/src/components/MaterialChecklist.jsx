@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import { Plus, Trash2, Check, X, Package, Search, Filter, Star } from 'lucide-react';
+import { Plus, Trash2, Check, X, Package, Search, Filter, Star, Calculator } from 'lucide-react';
 import AutocompleteInput from './AutocompleteInput';
 import BulkOperations from './BulkOperations';
+import CraftingCalculator from './CraftingCalculator';
 import { useFavorites } from '../hooks/useFavorites';
 import { getBlockIcon } from '../data/minecraftBlocks';
 
 export default function MaterialChecklist({ project, materials, onAdd, onUpdate, onDelete, onSaveTemplate }) {
   const [newMaterial, setNewMaterial] = useState({ name: '', quantity: '', category: '' });
   const [filter, setFilter] = useState('all');
+  const [selectedMaterial, setSelectedMaterial] = useState(null);
   const { addFavorite, removeFavorite, isFavorite } = useFavorites();
 
   const handleAdd = () => {
@@ -244,7 +246,7 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
         />
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-4 bg-gray-900">
         {Object.entries(groupedMaterials).map(([category, items]) => (
           <div key={category} className="mb-4">
             <h3 className="text-gray-400 font-semibold mb-2">{category}</h3>
@@ -252,16 +254,20 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
               {items.map(material => (
                 <div
                   key={material.id}
-                  className={`bg-gray-800 p-3 rounded-lg border transition-all transform hover:scale-[1.02] ${
+                  className={`bg-gray-800 p-3 rounded-lg border transition-all transform hover:scale-[1.02] cursor-pointer ${
                     material.collected 
                       ? 'border-green-600 shadow-green-600/20 shadow-lg' 
                       : 'border-gray-700 hover:border-gray-600'
                   }`}
+                  onClick={() => setSelectedMaterial(material)}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 flex-1">
                       <button
-                        onClick={() => toggleCollected(material)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleCollected(material);
+                        }}
                         className={`w-7 h-7 rounded-full flex items-center justify-center transition-all transform hover:scale-110 ${
                           material.collected 
                             ? 'bg-gradient-to-r from-green-500 to-green-600 shadow-lg' 
@@ -276,7 +282,20 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
                           {material.name}
                         </span>
                         <button
-                          onClick={() => isFavorite(material.name) ? removeFavorite(material.name) : addFavorite(material)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedMaterial(material);
+                          }}
+                          className="p-1 hover:bg-blue-600 rounded transition-all transform hover:scale-110"
+                          title="Calculate crafting materials"
+                        >
+                          <Calculator size={14} className="text-blue-400" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            isFavorite(material.name) ? removeFavorite(material.name) : addFavorite(material);
+                          }}
                           className="p-1 hover:bg-gray-700 rounded transition-all transform hover:scale-110"
                           title={isFavorite(material.name) ? 'Remove from favorites' : 'Add to favorites'}
                         >
@@ -291,21 +310,30 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
                     <div className="flex items-center gap-3">
                       <div className="flex gap-1">
                         <button
-                          onClick={() => incrementQuantity(material, 1)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            incrementQuantity(material, 1);
+                          }}
                           className="bg-gray-700 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs transition-all transform hover:scale-110"
                           title="Add 1"
                         >
                           +1
                         </button>
                         <button
-                          onClick={() => incrementQuantity(material, 10)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            incrementQuantity(material, 10);
+                          }}
                           className="bg-gray-700 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs transition-all transform hover:scale-110"
                           title="Add 10"
                         >
                           +10
                         </button>
                         <button
-                          onClick={() => incrementQuantity(material, 64)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            incrementQuantity(material, 64);
+                          }}
                           className="bg-gray-700 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs transition-all transform hover:scale-110"
                           title="Add Stack"
                         >
@@ -316,7 +344,10 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
                         <span className="text-white font-bold">{material.quantity}</span>
                       </div>
                       <button
-                        onClick={() => onDelete(material.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDelete(material.id);
+                        }}
                         className="p-2 hover:bg-red-600 rounded-lg transition-all transform hover:scale-110"
                         title="Delete Material"
                       >
@@ -330,6 +361,14 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
           </div>
         ))}
       </div>
+      
+      {/* Crafting Calculator Modal */}
+      {selectedMaterial && (
+        <CraftingCalculator
+          material={selectedMaterial}
+          onClose={() => setSelectedMaterial(null)}
+        />
+      )}
     </div>
   );
 }
