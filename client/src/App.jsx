@@ -93,7 +93,21 @@ function App() {
   };
 
   return (
-    <div className="h-screen flex bg-gray-900">
+    <div className="h-screen flex bg-gray-900" style={{ height: '100vh', display: 'flex', backgroundColor: '#111827' }}>
+      {/* Fallback test */}
+      <div style={{ 
+        position: 'fixed', 
+        top: '10px', 
+        left: '10px', 
+        background: '#374151', 
+        color: 'white', 
+        padding: '10px',
+        borderRadius: '5px',
+        zIndex: 9999
+      }}>
+        App loaded! Projects: {projects.length}
+      </div>
+      
       <ProjectSidebar
         projects={projects}
         selectedProject={selectedProject}
