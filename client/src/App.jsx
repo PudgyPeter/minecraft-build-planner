@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import ProjectSidebar from './components/ProjectSidebar';
 import MaterialChecklist from './components/MaterialChecklist';
 import Calculator from './components/Calculator';
+import BackupStatus from './components/BackupStatus';
 import * as api from './api';
 
 function App() {
@@ -113,19 +114,27 @@ function App() {
         onDuplicate={handleDuplicateProject}
       />
       
-      <MaterialChecklist
-        project={selectedProject}
-        materials={materials}
-        onAdd={handleAddMaterial}
-        onUpdate={handleUpdateMaterial}
-        onDelete={handleDeleteMaterial}
-        onSaveTemplate={handleSaveTemplate}
-      />
-      
-      <Calculator
-        project={selectedProject}
-        onAddToProject={handleAddFromCalculator}
-      />
+      <div className="flex-1 flex flex-col">
+        <div className="p-4 border-b border-gray-800">
+          <BackupStatus />
+        </div>
+        
+        <div className="flex-1 flex">
+          <MaterialChecklist
+            project={selectedProject}
+            materials={materials}
+            onAdd={handleAddMaterial}
+            onUpdate={handleUpdateMaterial}
+            onDelete={handleDeleteMaterial}
+            onSaveTemplate={handleSaveTemplate}
+          />
+          
+          <Calculator
+            project={selectedProject}
+            onAddToProject={handleAddFromCalculator}
+          />
+        </div>
+      </div>
     </div>
   );
 }

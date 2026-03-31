@@ -9,6 +9,8 @@ import projectRoutes from './routes/projects.js';
 import materialRoutes from './routes/materials.js';
 import templateRoutes from './routes/templates.js';
 import calculatorRoutes from './routes/calculator.js';
+import backupRoutes from './routes/backup.js';
+import { startBackupSystem } from './services/backupService.js';
 
 dotenv.config();
 
@@ -114,6 +116,7 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/materials', materialRoutes);
 app.use('/api/templates', templateRoutes);
 app.use('/api/calculate', calculatorRoutes);
+app.use('/api/backup', backupRoutes);
 
 if (isProduction) {
   const clientPath = path.join(__dirname, '../client/dist');
@@ -144,6 +147,13 @@ async function startServer() {
     console.log(`🚂 Server running on port ${PORT}`);
     console.log(`📦 Environment: ${isProduction ? 'production' : 'development'}`);
     console.log(`🗄️ Database: ${process.env.DATABASE_URL ? 'PostgreSQL' : 'SQLite'}`);
+    
+    // Start backup system after server is ready
+    if (isProduction) {
+      setTimeout(() => {
+        startBackupSystem();
+      }, 5000); // Wait 5 seconds for server to fully start
+    }
   });
 }
 
