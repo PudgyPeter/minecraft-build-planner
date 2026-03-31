@@ -216,7 +216,7 @@ function AppContent() {
           {selectedProject ? (
             <>
               {/* Main Content Area */}
-              <div className="flex-1 flex overflow-hidden">
+              <div className="flex-1 flex overflow-hidden min-w-0">
                 <MaterialChecklist
                   project={selectedProject}
                   materials={materials}
@@ -233,7 +233,7 @@ function AppContent() {
               </div>
               
               {/* Sidebar */}
-              <div className="w-80 border-l border-gray-700 bg-gray-800/30 backdrop-blur-sm overflow-hidden">
+              <div className="w-80 border-l border-gray-700 bg-gray-800/30 backdrop-blur-sm overflow-hidden shrink-0">
                 <FavoritesPanel 
                   onAddMaterial={handleAddMaterial}
                   onSearch={setSearchQuery}

@@ -31,8 +31,8 @@ export default function Calculator({ project, onAddToProject }) {
   };
 
   return (
-    <div className="w-80 bg-gradient-to-b from-gray-800 to-gray-900 border-l border-gray-700 flex flex-col">
-      <div className="p-4 border-b border-gray-700 bg-gradient-to-r from-blue-900 to-purple-900">
+    <div className="w-80 bg-gradient-to-b from-gray-800 to-gray-900 border-l border-gray-700 flex flex-col shrink-0">
+      <div className="p-4 border-b border-gray-700 bg-gradient-to-r from-blue-900 to-purple-900 shrink-0">
         <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
           <Zap className="text-yellow-400" size={24} />
           Crafting Calculator

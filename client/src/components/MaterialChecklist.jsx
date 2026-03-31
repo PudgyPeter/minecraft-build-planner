@@ -141,7 +141,7 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
   return (
     <div className="flex-1 bg-gray-900 flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="p-6 border-b border-gray-800 bg-gray-800/30 backdrop-blur-sm">
+      <div className="p-6 border-b border-gray-800 bg-gray-800/30 backdrop-blur-sm shrink-0">
         {/* Progress Bar */}
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
@@ -200,7 +200,7 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
       </div>
       
       {/* Filter Tabs */}
-      <div className="px-6 py-3 border-b border-gray-800 bg-gray-800/20">
+      <div className="px-6 py-3 border-b border-gray-800 bg-gray-800/20 shrink-0">
         <div className="flex gap-2">
           <button
             onClick={() => setFilter('all')}
@@ -235,10 +235,10 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
         </div>
       </div>
 
-        {/* Content Area */}
+      {/* Content Area */}
       <div className="flex-1 overflow-hidden flex flex-col">
         {/* Add Material Form */}
-        <div className="p-6 border-b border-gray-800 bg-gray-800/20">
+        <div className="p-6 border-b border-gray-800 bg-gray-800/20 shrink-0">
           <div className="flex gap-3 items-end">
             <div className="flex-1">
               <label className="block text-xs font-medium text-gray-400 mb-2">Add Material</label>
