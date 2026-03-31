@@ -1121,3 +1121,19 @@ export const blockImages = {
   'yellow_wool': 'https://minecraft.wiki/images/Yellow_Wool_JE3_BE2.png',
   'zombie_head': 'https://minecraft.wiki/images/Zombie_Head_JE3_BE2.png',
 };
+
+// Function to get display information for a block
+export function getBlockDisplay(blockName) {
+  const imageUrl = blockImages[blockName];
+  
+  if (imageUrl && imageUrl.startsWith('http')) {
+    return { type: 'image', url: imageUrl };
+  } else if (imageUrl && imageUrl.startsWith('/textures/')) {
+    return { type: 'image', url: imageUrl };
+  } else if (imageUrl && (imageUrl.startsWith('🔴') || imageUrl.startsWith('🟢') || imageUrl.startsWith('🔵') || imageUrl.startsWith('🟡') || imageUrl.startsWith('⚪'))) {
+    return { type: 'emoji', emoji: imageUrl };
+  } else {
+    // Default fallback
+    return { type: 'emoji', emoji: '📦' };
+  }
+}
