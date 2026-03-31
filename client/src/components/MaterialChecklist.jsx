@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Plus, Trash2, Check, X, Package, Search, Filter, Star, Calculator, TrendingUp, Zap, FileText } from 'lucide-react';
+import { Plus, Trash2, Check, X, Package, Search, Filter, Star, Calculator, TrendingUp, Zap, FileText, ArrowDown } from 'lucide-react';
 import AutocompleteInput from './AutocompleteInput';
 import BulkOperations from './BulkOperations';
 import CraftingCalculator from './CraftingCalculator';
 import MaterialCostEstimator from './MaterialCostEstimator';
 import QuickSearch from './QuickSearch';
 import ProjectTemplates from './ProjectTemplates';
+import BaseMaterialsCalculator from './BaseMaterialsCalculator';
 import { useFavorites } from '../hooks/useFavorites';
 import { getBlockIcon } from '../data/minecraftBlocks';
 
@@ -16,6 +17,7 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
   const [showCostEstimator, setShowCostEstimator] = useState(false);
   const [showQuickSearch, setShowQuickSearch] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [showBaseMaterials, setShowBaseMaterials] = useState(false);
   const { addFavorite, removeFavorite, isFavorite } = useFavorites();
 
   const handleAdd = () => {
@@ -158,6 +160,13 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
               title="Cost Analysis"
             >
               <TrendingUp size={16} />
+            </button>
+            <button
+              onClick={() => setShowBaseMaterials(true)}
+              className="bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-all transform hover:scale-105 shadow-lg"
+              title="Base Materials Calculator"
+            >
+              <ArrowDown size={16} />
             </button>
             <button
               onClick={() => setShowTemplates(true)}
@@ -437,6 +446,14 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
             });
           }}
           onClose={() => setShowTemplates(false)}
+        />
+      )}
+      
+      {/* Base Materials Calculator Modal */}
+      {showBaseMaterials && (
+        <BaseMaterialsCalculator
+          materials={materials}
+          onClose={() => setShowBaseMaterials(false)}
         />
       )}
     </div>
