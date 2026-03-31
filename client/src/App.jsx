@@ -4,12 +4,32 @@ import MaterialChecklist from './components/MaterialChecklist';
 import Calculator from './components/Calculator';
 import BackupStatus from './components/BackupStatus';
 import ProjectDashboard from './components/ProjectDashboard';
+import FavoritesPanel from './components/FavoritesPanel';
+import ThemeToggle from './components/ThemeToggle';
+import { ToastProvider, useToast } from './components/ToastContainer';
+import { useGlobalShortcuts } from './hooks/useKeyboardShortcuts';
+import { useTheme } from './hooks/useTheme';
 import * as api from './api';
 
-function App() {
+function AppContent() {
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
   const [materials, setMaterials] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const { toggleTheme } = useTheme();
+  const toast = useToast();
+
+  // Keyboard shortcuts
+  useGlobalShortcuts({
+    onCreateProject: handleCreateProject,
+    onSearch: (query) => setSearchQuery(query || ''),
+    onSave: () => {
+      toast.success('Project saved to backup');
+      // Trigger backup save
+      fetch('/api/backup/create', { method: 'POST' });
+    },
+    onToggleTheme: toggleTheme
+  });
 
   useEffect(() => {
     loadProjects();
@@ -27,6 +47,7 @@ function App() {
       setProjects(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Failed to load projects:', error);
+      toast.error('Failed to load projects');
       setProjects([]);
     }
   };
@@ -37,6 +58,7 @@ function App() {
       setMaterials(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Failed to load materials:', error);
+      toast.error('Failed to load materials');
       setMaterials([]);
     }
   };
@@ -44,64 +66,97 @@ function App() {
   const handleCreateProject = async () => {
     const name = prompt('Enter project name:');
     if (name) {
-      const project = await api.createProject(name);
-      setProjects([project, ...projects]);
-      setSelectedProject(project);
+      try {
+        const project = await api.createProject(name);
+        setProjects([project, ...projects]);
+        setSelectedProject(project);
+        toast.success(`Project "${name}" created!`);
+      } catch (error) {
+        toast.error('Failed to create project');
+      }
     }
   };
 
   const handleDeleteProject = async (id) => {
     if (confirm('Delete this project?')) {
-      await api.deleteProject(id);
-      setProjects(projects.filter(p => p.id !== id));
-      if (selectedProject?.id === id) {
-        setSelectedProject(null);
-        setMaterials([]);
+      try {
+        await api.deleteProject(id);
+        setProjects(projects.filter(p => p.id !== id));
+        if (selectedProject?.id === id) {
+          setSelectedProject(null);
+          setMaterials([]);
+        }
+        toast.success('Project deleted');
+      } catch (error) {
+        toast.error('Failed to delete project');
       }
     }
   };
 
   const handleDuplicateProject = async (id) => {
-    const duplicate = await api.duplicateProject(id);
-    setProjects([duplicate, ...projects]);
+    try {
+      const duplicate = await api.duplicateProject(id);
+      setProjects([duplicate, ...projects]);
+      toast.success('Project duplicated');
+    } catch (error) {
+      toast.error('Failed to duplicate project');
+    }
   };
 
-  const handleAddMaterial = async (data) => {
-    const material = await api.createMaterial(data);
-    setMaterials([...materials, material]);
+  const handleAddMaterial = async (material) => {
+    try {
+      const newMaterial = await api.createMaterial(material);
+      setMaterials([...materials, newMaterial]);
+      toast.success(`${material.name} added to project`);
+    } catch (error) {
+      toast.error('Failed to add material');
+    }
   };
 
   const handleUpdateMaterial = async (id, updates) => {
-    const updated = await api.updateMaterial(id, updates);
-    setMaterials(materials.map(m => m.id === id ? updated : m));
+    try {
+      await api.updateMaterial(id, updates);
+      setMaterials(materials.map(m => m.id === id ? { ...m, ...updates } : m));
+    } catch (error) {
+      toast.error('Failed to update material');
+    }
   };
 
   const handleDeleteMaterial = async (id) => {
-    await api.deleteMaterial(id);
-    setMaterials(materials.filter(m => m.id !== id));
+    try {
+      await api.deleteMaterial(id);
+      setMaterials(materials.filter(m => m.id !== id));
+      toast.success('Material deleted');
+    } catch (error) {
+      toast.error('Failed to delete material');
+    }
   };
 
   const handleSaveTemplate = async (projectId) => {
     const name = prompt('Enter template name:');
     if (name) {
-      await api.createTemplate(name, projectId);
-      alert('Template saved!');
+      try {
+        const project = projects.find(p => p.id === projectId);
+        await api.createTemplate({ name, materials: project.materials });
+        toast.success(`Template "${name}" saved`);
+      } catch (error) {
+        toast.error('Failed to save template');
+      }
     }
   };
 
-  const handleAddFromCalculator = async (baseMaterials) => {
-    if (!selectedProject) return;
-    
-    await api.bulkCreateMaterials(
-      selectedProject.id,
-      baseMaterials.map(m => ({
+  const handleAddFromCalculator = (materials) => {
+    materials.forEach(m => {
+      handleAddMaterial({
+        projectId: selectedProject.id,
         name: m.name,
         quantity: m.quantity,
         category: 'Calculated'
-      }))
-    );
+      });
+    });
     
     loadMaterials(selectedProject.id);
+    toast.success(`Added ${materials.length} calculated materials`);
   };
 
   return (
@@ -116,26 +171,36 @@ function App() {
       />
       
       <div className="flex-1 flex flex-col">
-        <div className="p-4 border-b border-gray-800">
+        <div className="p-4 border-b border-gray-800 flex items-center justify-between">
           <BackupStatus />
+          <ThemeToggle />
         </div>
         
         <div className="flex-1 flex">
           {selectedProject ? (
             <>
-              <MaterialChecklist
-                project={selectedProject}
-                materials={materials}
-                onAdd={handleAddMaterial}
-                onUpdate={handleUpdateMaterial}
-                onDelete={handleDeleteMaterial}
-                onSaveTemplate={handleSaveTemplate}
-              />
+              <div className="flex-1 flex">
+                <MaterialChecklist
+                  project={selectedProject}
+                  materials={materials}
+                  onAdd={handleAddMaterial}
+                  onUpdate={handleUpdateMaterial}
+                  onDelete={handleDeleteMaterial}
+                  onSaveTemplate={handleSaveTemplate}
+                />
+                
+                <Calculator
+                  project={selectedProject}
+                  onAddToProject={handleAddFromCalculator}
+                />
+              </div>
               
-              <Calculator
-                project={selectedProject}
-                onAddToProject={handleAddFromCalculator}
-              />
+              <div className="w-80 border-l border-gray-700 p-4">
+                <FavoritesPanel 
+                  onAddMaterial={handleAddMaterial}
+                  onSearch={setSearchQuery}
+                />
+              </div>
             </>
           ) : (
             <div className="flex-1 p-6 overflow-y-auto">
@@ -145,6 +210,14 @@ function App() {
         </div>
       </div>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <ToastProvider>
+      <AppContent />
+    </ToastProvider>
   );
 }
 

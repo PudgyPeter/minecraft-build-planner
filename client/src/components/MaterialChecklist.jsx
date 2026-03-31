@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import { Plus, Trash2, Check, X, Package, Search, Filter } from 'lucide-react';
+import { Plus, Trash2, Check, X, Package, Search, Filter, Star } from 'lucide-react';
 import AutocompleteInput from './AutocompleteInput';
 import BulkOperations from './BulkOperations';
+import { useFavorites } from '../hooks/useFavorites';
 import { getBlockIcon } from '../data/minecraftBlocks';
 
 export default function MaterialChecklist({ project, materials, onAdd, onUpdate, onDelete, onSaveTemplate }) {
   const [newMaterial, setNewMaterial] = useState({ name: '', quantity: '', category: '' });
   const [filter, setFilter] = useState('all');
+  const { addFavorite, removeFavorite, isFavorite } = useFavorites();
 
   const handleAdd = () => {
     if (newMaterial.name && newMaterial.quantity) {
@@ -273,6 +275,16 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
                         <span className={`text-white font-medium ${material.collected ? 'line-through text-gray-500' : ''}`}>
                           {material.name}
                         </span>
+                        <button
+                          onClick={() => isFavorite(material.name) ? removeFavorite(material.name) : addFavorite(material)}
+                          className="p-1 hover:bg-gray-700 rounded transition-all transform hover:scale-110"
+                          title={isFavorite(material.name) ? 'Remove from favorites' : 'Add to favorites'}
+                        >
+                          <Star 
+                            size={14} 
+                            className={isFavorite(material.name) ? 'text-yellow-500 fill-yellow-500' : 'text-gray-400'}
+                          />
+                        </button>
                       </div>
                     </div>
                     
