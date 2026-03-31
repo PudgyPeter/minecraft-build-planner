@@ -181,6 +181,23 @@ const craftingRecipes = {
   'black_concrete_stairs': { input: { 'black_concrete': 6 }, output: 4 },
   'black_concrete_slab': { input: { 'black_concrete': 3 }, output: 6 },
   
+  // Walls
+  'stone_wall': { input: { 'stone': 6 }, output: 6 },
+  'cobblestone_wall': { input: { 'cobblestone': 6 }, output: 6 },
+  'andesite_wall': { input: { 'andesite': 6 }, output: 6 },
+  'diorite_wall': { input: { 'diorite': 6 }, output: 6 },
+  'granite_wall': { input: { 'granite': 6 }, output: 6 },
+  'polished_andesite_wall': { input: { 'polished_andesite': 6 }, output: 6 },
+  'polished_diorite_wall': { input: { 'polished_diorite': 6 }, output: 6 },
+  'polished_granite_wall': { input: { 'polished_granite': 6 }, output: 6 },
+  'sandstone_wall': { input: { 'sandstone': 6 }, output: 6 },
+  'red_sandstone_wall': { input: { 'red_sandstone': 6 }, output: 6 },
+  
+  // Polished stone recipes
+  'polished_andesite': { input: { 'andesite': 4 }, output: 4 },
+  'polished_diorite': { input: { 'diorite': 4 }, output: 4 },
+  'polished_granite': { input: { 'granite': 4 }, output: 4 },
+  
   // Terracotta variants
   'white_terracotta_stairs': { input: { 'white_terracotta': 6 }, output: 4 },
   'white_terracotta_slab': { input: { 'white_terracotta': 3 }, output: 6 },
