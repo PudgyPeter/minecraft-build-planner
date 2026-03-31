@@ -294,7 +294,7 @@ export default function MaterialCostEstimator({ materials, onClose }) {
                   <div className="flex items-center gap-3">
                     <BlockIcon 
                       blockName={materialName}
-                      size={20}
+                      size={24}
                     />
                     <span className="text-white capitalize">
                       {materialName.replace(/_/g, ' ')}

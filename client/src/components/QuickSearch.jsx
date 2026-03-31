@@ -139,7 +139,7 @@ export default function QuickSearch({ onAddMaterial, onClose }) {
                     <div className="mb-1">
                       <BlockIcon 
                         blockName={block.name}
-                        size={32}
+                        size={40}
                       />
                     </div>
                     <div className="text-xs text-gray-300 truncate">{block.displayName}</div>
@@ -182,7 +182,7 @@ export default function QuickSearch({ onAddMaterial, onClose }) {
                       <div className="flex items-center gap-3">
                         <BlockIcon 
                           blockName={block.name}
-                          size={20}
+                          size={24}
                         />
                         <div>
                           <div className="text-white font-medium">{block.displayName}</div>

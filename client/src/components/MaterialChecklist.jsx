@@ -317,7 +317,7 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
                       <div className="flex items-center gap-2">
                         <BlockIcon 
                           blockName={material.name.toLowerCase().replace(/\s+/g, '_')} 
-                          size={20}
+                          size={24}
                         />
                         <span className={`text-white font-medium ${material.collected ? 'line-through text-gray-500' : ''}`}>
                           {material.name}

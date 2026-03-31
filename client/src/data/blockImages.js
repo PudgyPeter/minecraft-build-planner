@@ -165,6 +165,13 @@ export const blockImages = {
   'polished_granite_slab': 'https://minecraft.wiki/images/Polished_Granite_Slab_JE2_BE1.png',
   'polished_granite_wall': 'https://minecraft.wiki/images/Polished_Granite_Wall_JE2_BE1.png',
   
+  // Additional missing walls
+  'andesite_wall': 'https://minecraft.wiki/images/Andesite_Wall_JE2_BE1.png',
+  'polished_andesite_wall': 'https://minecraft.wiki/images/Polished_Andesite_Wall_JE2_BE1.png',
+  'stone_wall': 'https://minecraft.wiki/images/Cobblestone_Wall_JE3_BE2.png',
+  'brick_wall': 'https://minecraft.wiki/images/Brick_Wall_JE3_BE2.png',
+  'mossy_stone_brick_wall': 'https://minecraft.wiki/images/Mossy_Stone_Brick_Wall_JE3_BE2.png',
+  
   // Deepslate
   'deepslate': 'https://minecraft.wiki/images/Deepslate_JE2_BE1.png',
   'cobbled_deepslate': 'https://minecraft.wiki/images/Cobbled_Deepslate_JE2_BE1.png',

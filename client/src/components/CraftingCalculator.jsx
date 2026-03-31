@@ -325,7 +325,7 @@ export default function CraftingCalculator({ material, onClose }) {
             <div className="flex items-center gap-3 mb-4">
               <BlockIcon 
                 blockName={material.name.toLowerCase().replace(/\s+/g, '_')} 
-                size={32}
+                size={40}
               />
               <div>
                 <h4 className="text-lg font-semibold text-white">{material.name}</h4>
@@ -363,7 +363,7 @@ export default function CraftingCalculator({ material, onClose }) {
                       <div className="flex items-center gap-3">
                         <BlockIcon 
                           blockName={materialName}
-                          size={20}
+                          size={24}
                         />
                         <span className="text-white capitalize">
                           {materialName.replace(/_/g, ' ')}
