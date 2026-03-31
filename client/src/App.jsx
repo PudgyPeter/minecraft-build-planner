@@ -3,6 +3,7 @@ import ProjectSidebar from './components/ProjectSidebar';
 import MaterialChecklist from './components/MaterialChecklist';
 import Calculator from './components/Calculator';
 import BackupStatus from './components/BackupStatus';
+import ProjectDashboard from './components/ProjectDashboard';
 import * as api from './api';
 
 function App() {
@@ -120,19 +121,27 @@ function App() {
         </div>
         
         <div className="flex-1 flex">
-          <MaterialChecklist
-            project={selectedProject}
-            materials={materials}
-            onAdd={handleAddMaterial}
-            onUpdate={handleUpdateMaterial}
-            onDelete={handleDeleteMaterial}
-            onSaveTemplate={handleSaveTemplate}
-          />
-          
-          <Calculator
-            project={selectedProject}
-            onAddToProject={handleAddFromCalculator}
-          />
+          {selectedProject ? (
+            <>
+              <MaterialChecklist
+                project={selectedProject}
+                materials={materials}
+                onAdd={handleAddMaterial}
+                onUpdate={handleUpdateMaterial}
+                onDelete={handleDeleteMaterial}
+                onSaveTemplate={handleSaveTemplate}
+              />
+              
+              <Calculator
+                project={selectedProject}
+                onAddToProject={handleAddFromCalculator}
+              />
+            </>
+          ) : (
+            <div className="flex-1 p-6 overflow-y-auto">
+              <ProjectDashboard projects={projects} materials={[]} />
+            </div>
+          )}
         </div>
       </div>
     </div>

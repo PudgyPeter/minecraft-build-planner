@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Plus, Trash2, Check, X, Package, Search, Filter } from 'lucide-react';
 import AutocompleteInput from './AutocompleteInput';
+import BulkOperations from './BulkOperations';
 import { getBlockIcon } from '../data/minecraftBlocks';
 
 export default function MaterialChecklist({ project, materials, onAdd, onUpdate, onDelete, onSaveTemplate }) {
@@ -13,10 +14,83 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
         projectId: project.id,
         name: newMaterial.name,
         quantity: parseInt(newMaterial.quantity),
-        category: newMaterial.category || null
+        category: newMaterial.category || 'General'
       });
       setNewMaterial({ name: '', quantity: '', category: '' });
     }
+  };
+
+  const handleBulkUpdate = (updatedMaterials) => {
+    updatedMaterials.forEach(material => {
+      onUpdate(material.id, material);
+    });
+  };
+
+  const handleBulkDelete = (materialIds) => {
+    materialIds.forEach(id => {
+      onDelete(id);
+    });
+  };
+
+  const handleBulkExport = (selectedMaterials) => {
+    const exportData = {
+      timestamp: new Date().toISOString(),
+      projectName: project.name,
+      materials: selectedMaterials.map(m => ({
+        name: m.name,
+        quantity: m.quantity,
+        category: m.category,
+        collected: m.collected
+      }))
+    };
+
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${project.name}-materials-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleBulkImport = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const importData = JSON.parse(event.target.result);
+          
+          if (importData.materials && Array.isArray(importData.materials)) {
+            importData.materials.forEach(material => {
+              onAdd({
+                projectId: project.id,
+                name: material.name,
+                quantity: material.quantity,
+                category: material.category || 'General',
+                collected: material.collected || false
+              });
+            });
+            
+            alert(`Successfully imported ${importData.materials.length} materials!`);
+          } else {
+            alert('Invalid file format. Please select a valid materials export file.');
+          }
+        } catch (error) {
+          alert('Error reading file. Please ensure it\'s a valid JSON file.');
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
   };
 
   const toggleCollected = (material) => {
@@ -155,6 +229,17 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Bulk Operations */}
+      <div className="p-4 border-b border-gray-700">
+        <BulkOperations
+          materials={materials}
+          onBulkUpdate={handleBulkUpdate}
+          onBulkDelete={handleBulkDelete}
+          onBulkExport={handleBulkExport}
+          onBulkImport={handleBulkImport}
+        />
       </div>
 
       <div className="flex-1 overflow-y-auto p-4">
