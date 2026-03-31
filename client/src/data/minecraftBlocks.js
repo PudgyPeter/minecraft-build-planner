@@ -1383,7 +1383,7 @@ export const minecraftBlocks = [
   // Additional armor variants
   { name: 'wolf_armor', displayName: 'Wolf Armor', category: 'Combat' },
   { name: 'armadillo_scute', displayName: 'Armadillo Scute', category: 'Items' },
-};
+];
 
 // Export the new image-based icon system
 export { getBlockDisplay } from './blockImages.js';
