@@ -1,8 +1,11 @@
 import { useState } from 'react';
-import { Plus, Trash2, Check, X, Package, Search, Filter, Star, Calculator } from 'lucide-react';
+import { Plus, Trash2, Check, X, Package, Search, Filter, Star, Calculator, TrendingUp, Zap, FileText } from 'lucide-react';
 import AutocompleteInput from './AutocompleteInput';
 import BulkOperations from './BulkOperations';
 import CraftingCalculator from './CraftingCalculator';
+import MaterialCostEstimator from './MaterialCostEstimator';
+import QuickSearch from './QuickSearch';
+import ProjectTemplates from './ProjectTemplates';
 import { useFavorites } from '../hooks/useFavorites';
 import { getBlockIcon } from '../data/minecraftBlocks';
 
@@ -10,6 +13,9 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
   const [newMaterial, setNewMaterial] = useState({ name: '', quantity: '', category: '' });
   const [filter, setFilter] = useState('all');
   const [selectedMaterial, setSelectedMaterial] = useState(null);
+  const [showCostEstimator, setShowCostEstimator] = useState(false);
+  const [showQuickSearch, setShowQuickSearch] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
   const { addFavorite, removeFavorite, isFavorite } = useFavorites();
 
   const handleAdd = () => {
@@ -138,12 +144,35 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
             <Package className="text-green-500" size={24} />
             <h2 className="text-2xl font-bold text-white">{project.name}</h2>
           </div>
-          <button
-            onClick={() => onSaveTemplate(project.id)}
-            className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all transform hover:scale-105 shadow-lg"
-          >
-            Save as Template
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowQuickSearch(true)}
+              className="bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-all transform hover:scale-105 shadow-lg"
+              title="Quick Add Materials"
+            >
+              <Zap size={16} />
+            </button>
+            <button
+              onClick={() => setShowCostEstimator(true)}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-all transform hover:scale-105 shadow-lg"
+              title="Cost Analysis"
+            >
+              <TrendingUp size={16} />
+            </button>
+            <button
+              onClick={() => setShowTemplates(true)}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-all transform hover:scale-105 shadow-lg"
+              title="Project Templates"
+            >
+              <FileText size={16} />
+            </button>
+            <button
+              onClick={() => onSaveTemplate(project.id)}
+              className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all transform hover:scale-105 shadow-lg"
+            >
+              Save as Template
+            </button>
+          </div>
         </div>
         
         <div className="mb-4">
@@ -367,6 +396,47 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
         <CraftingCalculator
           material={selectedMaterial}
           onClose={() => setSelectedMaterial(null)}
+        />
+      )}
+      
+      {/* Cost Estimator Modal */}
+      {showCostEstimator && (
+        <MaterialCostEstimator
+          materials={materials}
+          onClose={() => setShowCostEstimator(false)}
+        />
+      )}
+      
+      {/* Quick Search Modal */}
+      {showQuickSearch && (
+        <QuickSearch
+          onAddMaterial={(material) => {
+            onAdd({
+              projectId: project.id,
+              name: material.name,
+              quantity: material.quantity,
+              category: material.category
+            });
+          }}
+          onClose={() => setShowQuickSearch(false)}
+        />
+      )}
+      
+      {/* Project Templates Modal */}
+      {showTemplates && (
+        <ProjectTemplates
+          onUseTemplate={(template) => {
+            // Add all materials from template
+            template.materials.forEach(material => {
+              onAdd({
+                projectId: project.id,
+                name: material.name,
+                quantity: material.quantity,
+                category: material.category
+              });
+            });
+          }}
+          onClose={() => setShowTemplates(false)}
         />
       )}
     </div>
