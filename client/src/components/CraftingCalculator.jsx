@@ -16,6 +16,17 @@ const craftingRecipes = {
   'bamboo_planks': { input: { 'bamboo_block': 1 }, output: 2 },
   'pale_oak_planks': { input: { 'pale_oak_log': 1 }, output: 4 },
   
+  // Stripped logs (1 log + axe = 1 stripped log)
+  'stripped_oak_log': { input: { 'oak_log': 1 }, output: 1 },
+  'stripped_spruce_log': { input: { 'spruce_log': 1 }, output: 1 },
+  'stripped_birch_log': { input: { 'birch_log': 1 }, output: 1 },
+  'stripped_jungle_log': { input: { 'jungle_log': 1 }, output: 1 },
+  'stripped_acacia_log': { input: { 'acacia_log': 1 }, output: 1 },
+  'stripped_dark_oak_log': { input: { 'dark_oak_log': 1 }, output: 1 },
+  'stripped_mangrove_log': { input: { 'mangrove_log': 1 }, output: 1 },
+  'stripped_cherry_log': { input: { 'cherry_log': 1 }, output: 1 },
+  'stripped_pale_oak_log': { input: { 'pale_oak_log': 1 }, output: 1 },
+  
   // Sticks
   'stick': { input: { 'oak_planks': 2 }, output: 4 },
   
@@ -32,6 +43,11 @@ const craftingRecipes = {
   'polished_diorite_slab': { input: { 'polished_diorite': 3 }, output: 6 },
   'polished_granite_stairs': { input: { 'polished_granite': 6 }, output: 4 },
   'polished_granite_slab': { input: { 'polished_granite': 3 }, output: 6 },
+  
+  // Base polished stone recipes (4 stone blocks + 1 crafting = 4 polished stone)
+  'polished_andesite': { input: { 'andesite': 4 }, output: 4 },
+  'polished_diorite': { input: { 'diorite': 4 }, output: 4 },
+  'polished_granite': { input: { 'granite': 4 }, output: 4 },
   
   // Walls
   'stone_wall': { input: { 'stone': 6 }, output: 6 },
