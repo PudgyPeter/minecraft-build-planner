@@ -4,7 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { optionalAuth } from './middleware/auth.js';
-import { PrismaClient } from '@prisma/client';
+import prisma from './db/prisma.js';
 import projectRoutes from './routes/projects.js';
 import materialRoutes from './routes/materials.js';
 import templateRoutes from './routes/templates.js';
@@ -12,32 +12,27 @@ import calculatorRoutes from './routes/calculator.js';
 
 dotenv.config();
 
-// Initialize Prisma Client
-const prisma = new PrismaClient();
-
 // Initialize database
 async function initializeDatabase() {
   try {
-    console.log('🔍 Checking database connection...');
-    await prisma.$connect();
-    console.log('✅ Database connected successfully');
-    
-    // Test database by creating a simple query
+    console.log('🔍 Testing database connection...');
     const projectCount = await prisma.project.count();
-    console.log(`📊 Found ${projectCount} projects in database`);
+    console.log(`📊 Database connected! Found ${projectCount} projects`);
   } catch (error) {
-    console.error('❌ Database initialization error:', error);
-    console.log('🔄 Attempting to run migrations...');
+    console.error('❌ Database connection failed:', error.message);
+    console.log('🔄 Running database migrations...');
     
     try {
       const { execSync } = await import('child_process');
       execSync('npx prisma migrate deploy', { stdio: 'inherit' });
-      console.log('✅ Migrations completed, retrying connection...');
-      await prisma.$connect();
-      console.log('✅ Database connected after migrations');
+      console.log('✅ Migrations completed');
+      
+      // Test connection after migrations
+      const count = await prisma.project.count();
+      console.log(`📊 Database ready! Found ${count} projects`);
     } catch (migrationError) {
       console.error('❌ Migration failed:', migrationError.message);
-      // Don't exit, let the app try to run anyway
+      console.log('⚠️ Starting server anyway, database features may not work');
     }
   }
 }
