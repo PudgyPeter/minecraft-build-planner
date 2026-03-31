@@ -278,7 +278,6 @@ export default function MaterialChecklist({ project, materials, onAdd, onUpdate,
             </button>
           </div>
         </div>
-        </div>
 
         {/* Materials List */}
         <div className="flex-1 overflow-y-auto p-6 bg-gray-900/50">
