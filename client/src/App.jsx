@@ -20,13 +20,23 @@ function App() {
   }, [selectedProject]);
 
   const loadProjects = async () => {
-    const data = await api.fetchProjects();
-    setProjects(data);
+    try {
+      const data = await api.fetchProjects();
+      setProjects(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Failed to load projects:', error);
+      setProjects([]);
+    }
   };
 
   const loadMaterials = async (projectId) => {
-    const data = await api.fetchMaterials(projectId);
-    setMaterials(data);
+    try {
+      const data = await api.fetchMaterials(projectId);
+      setMaterials(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Failed to load materials:', error);
+      setMaterials([]);
+    }
   };
 
   const handleCreateProject = async () => {

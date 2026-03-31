@@ -1,8 +1,14 @@
 const API_URL = import.meta.env.PROD ? '/api' : 'http://localhost:3000/api';
 
 export async function fetchProjects() {
-  const res = await fetch(`${API_URL}/projects`);
-  return res.json();
+  try {
+    const res = await fetch(`${API_URL}/projects`);
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    return await res.json();
+  } catch (error) {
+    console.error('API Error:', error);
+    return [];
+  }
 }
 
 export async function createProject(name) {
@@ -26,8 +32,14 @@ export async function duplicateProject(id) {
 }
 
 export async function fetchMaterials(projectId) {
-  const res = await fetch(`${API_URL}/materials/projects/${projectId}/materials`);
-  return res.json();
+  try {
+    const res = await fetch(`${API_URL}/materials/projects/${projectId}/materials`);
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    return await res.json();
+  } catch (error) {
+    console.error('API Error:', error);
+    return [];
+  }
 }
 
 export async function createMaterial(data) {
