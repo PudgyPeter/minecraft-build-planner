@@ -130,8 +130,8 @@ export const blockImages = {
   'pale_oak_button': 'https://minecraft.wiki/images/Pale_Oak_Button_JE1_BE1.png',
   
   // Stone blocks
-  'stone': 'https://minecraft.wiki/images/Stone_JE3_BE2.png',
-  'cobblestone': 'https://minecraft.wiki/images/Cobblestone_JE3_BE2.png',
+  'stone': '/textures/stone.png',
+  'cobblestone': '/textures/cobblestone.png',
   'stone_bricks': 'https://minecraft.wiki/images/Stone_Bricks_JE2_BE1.png',
   'chiseled_stone_bricks': 'https://minecraft.wiki/images/Chiseled_Stone_Bricks_JE1_BE1.png',
   'cracked_stone_bricks': 'https://minecraft.wiki/images/Cracked_Stone_Bricks_JE1_BE1.png',

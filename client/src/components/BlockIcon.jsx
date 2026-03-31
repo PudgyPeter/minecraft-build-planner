@@ -7,9 +7,7 @@ export default function BlockIcon({ blockName, size = 24, className = '' }) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const display = getBlockDisplay(blockName);
   
-  // Debug logging
-  console.log('BlockIcon:', { blockName, displayType: display.type, hasUrl: !!display.url });
-  
+    
   useEffect(() => {
     // Reset error state when blockName changes
     setImageError(false);
