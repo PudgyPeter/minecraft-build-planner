@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Database, Download, RefreshCw, Save, AlertCircle } from 'lucide-react';
+import { apiFetch } from '../api';
 
 export default function BackupStatus() {
   const [status, setStatus] = useState(null);
@@ -14,7 +15,7 @@ export default function BackupStatus() {
 
   const fetchBackupStatus = async () => {
     try {
-      const response = await fetch('/api/backup/status');
+      const response = await apiFetch('/api/backup/status');
       const data = await response.json();
       setStatus(data);
     } catch (error) {
@@ -26,9 +27,9 @@ export default function BackupStatus() {
     setLoading(true);
     setMessage('');
     try {
-      const response = await fetch('/api/backup/create', { method: 'POST' });
+      const response = await apiFetch('/api/backup/create', { method: 'POST' });
       const data = await response.json();
-      setMessage('✅ Backup created and saved to Git!');
+      setMessage(`✅ ${data.message}`);
       fetchBackupStatus();
     } catch (error) {
       setMessage('❌ Failed to create backup');
@@ -45,9 +46,9 @@ export default function BackupStatus() {
     setLoading(true);
     setMessage('');
     try {
-      const response = await fetch('/api/backup/restore', { method: 'POST' });
+      const response = await apiFetch('/api/backup/restore', { method: 'POST' });
       const data = await response.json();
-      setMessage('✅ Data restored from backup! Refreshing page...');
+      setMessage(`✅ ${data.message}. Refreshing page...`);
       setTimeout(() => window.location.reload(), 2000);
     } catch (error) {
       setMessage('❌ Failed to restore backup');
@@ -58,7 +59,7 @@ export default function BackupStatus() {
 
   const downloadBackup = async () => {
     try {
-      const response = await fetch('/api/backup/download');
+      const response = await apiFetch('/api/backup/download');
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -153,7 +154,7 @@ export default function BackupStatus() {
       <div className="mt-3 text-xs text-gray-400 flex items-start gap-1">
         <AlertCircle size={12} className="mt-0.5" />
         <span>
-          Auto-backups run every 5 minutes and are saved to Git for maximum safety.
+          Project changes are saved to Netlify Database. Use Backup Now to save a restorable snapshot.
         </span>
       </div>
     </div>

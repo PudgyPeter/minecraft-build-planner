@@ -6,3 +6,5 @@ client/dist
 *.db-journal
 .DS_Store
 backups/backup-*.json
+.netlify/*
+!.netlify/results.md

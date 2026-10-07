@@ -52,10 +52,13 @@ function AppContent() {
     save: {
       key: 's',
       ctrl: true,
-      action: () => {
-        toast.success('Project saved to backup');
-        // Trigger backup save
-        fetch('/api/backup/create', { method: 'POST' });
+      action: async () => {
+        try {
+          await api.apiFetch('/api/backup/create', { method: 'POST' });
+          toast.success('Project saved to backup');
+        } catch {
+          toast.error('Failed to create backup');
+        }
       },
       enabled: true
     },
@@ -160,8 +163,7 @@ function AppContent() {
     const name = prompt('Enter template name:');
     if (name) {
       try {
-        const project = projects.find(p => p.id === projectId);
-        await api.createTemplate({ name, materials: project.materials });
+        await api.createTemplate(name, projectId);
         toast.success(`Template "${name}" saved`);
       } catch (error) {
         toast.error('Failed to save template');
@@ -169,18 +171,19 @@ function AppContent() {
     }
   };
 
-  const handleAddFromCalculator = (materials) => {
-    materials.forEach(m => {
-      handleAddMaterial({
-        projectId: selectedProject.id,
-        name: m.name,
-        quantity: m.quantity,
+  const handleAddFromCalculator = async (calculatedMaterials) => {
+    if (!selectedProject) return;
+    try {
+      const data = await api.bulkCreateMaterials(selectedProject.id, calculatedMaterials.map(material => ({
+        name: material.name,
+        quantity: material.quantity,
         category: 'Calculated'
-      });
-    });
-    
-    loadMaterials(selectedProject.id);
-    toast.success(`Added ${materials.length} calculated materials`);
+      })));
+      setMaterials(data);
+      toast.success(`Added ${calculatedMaterials.length} calculated materials`);
+    } catch {
+      toast.error('Failed to add calculated materials');
+    }
   };
 
   return (

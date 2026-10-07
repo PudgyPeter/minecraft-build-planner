@@ -4,26 +4,33 @@
   "description": "Minecraft Build Planner - Track materials and calculate crafting requirements",
   "main": "server/index.js",
   "type": "module",
+  "engines": {
+    "node": ">=22.18.0"
+  },
   "scripts": {
     "dev": "nodemon server/index.js",
     "start": "node server/index.js",
-    "build": "npx prisma generate && cd client && npm ci && npm run build && echo '✅ Build completed' && ls -la dist",
-    "postinstall": "prisma generate",
-    "migrate": "prisma migrate deploy",
-    "migrate:dev": "prisma migrate dev",
-    "studio": "prisma studio"
+    "build": "npm --prefix client ci && npm --prefix client run build",
+    "db:generate": "drizzle-kit generate",
+    "studio": "drizzle-kit studio"
   },
-  "keywords": ["minecraft", "planner", "crafting"],
+  "keywords": [
+    "minecraft",
+    "planner",
+    "crafting"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2",
+    "@netlify/database": "^2.0.1",
     "cors": "^2.8.5",
-    "@prisma/client": "^5.22.0",
-    "dotenv": "^16.4.1"
+    "dotenv": "^16.4.1",
+    "drizzle-orm": "^1.0.0-beta.22",
+    "express": "^4.18.2",
+    "serverless-http": "^4.0.0"
   },
   "devDependencies": {
-    "prisma": "^5.22.0",
+    "drizzle-kit": "^1.0.0-beta.22",
     "nodemon": "^3.0.3"
   }
 }
