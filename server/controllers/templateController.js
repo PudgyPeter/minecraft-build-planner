@@ -1,98 +1,55 @@
-import prisma from '../db/prisma.js';
+import { randomUUID } from 'node:crypto';
+import { desc, eq, inArray } from 'drizzle-orm';
+import { db } from '../../db/index.js';
+import { materials, projects, templateMaterials, templates } from '../../db/schema.ts';
+import { endpoint, fail, requiredText } from './helpers.js';
 
-export async function getTemplates(req, res) {
-  try {
-    const templates = await prisma.template.findMany({
-      include: {
-        materials: true
-      },
-      orderBy: {
-        createdAt: 'desc'
-      }
-    });
-    res.json(templates);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+export async function listTemplates(database = db) {
+  const rows = await database.select().from(templates).orderBy(desc(templates.createdAt));
+  if (!rows.length) return [];
+  const items = await database.select().from(templateMaterials).where(inArray(templateMaterials.templateId, rows.map(template => template.id)));
+  return rows.map(template => ({ ...template, materials: items.filter(material => material.templateId === template.id) }));
 }
 
-export async function createTemplate(req, res) {
-  try {
-    const { name, projectId } = req.body;
-    
-    const project = await prisma.project.findUnique({
-      where: { id: projectId },
-      include: { materials: true }
-    });
+export const getTemplates = endpoint(async (req, res) => {
+  res.json(await listTemplates());
+});
 
-    if (!project) {
-      return res.status(404).json({ error: 'Project not found' });
-    }
+export const createTemplate = endpoint(async (req, res) => {
+  const name = requiredText(req.body?.name, 'Template name');
+  const projectId = requiredText(req.body?.projectId, 'Project ID');
+  const template = await db.transaction(async transaction => {
+    const [project] = await transaction.select().from(projects).where(eq(projects.id, projectId));
+    if (!project) fail(404, 'Project not found');
+    const items = await transaction.select().from(materials).where(eq(materials.projectId, projectId));
+    const [created] = await transaction.insert(templates).values({ id: randomUUID(), name }).returning();
+    const copied = items.length ? await transaction.insert(templateMaterials).values(items.map(material => ({
+      id: randomUUID(), templateId: created.id, name: material.name,
+      quantity: material.quantity, category: material.category
+    }))).returning() : [];
+    return { ...created, materials: copied };
+  });
+  res.status(201).json(template);
+});
 
-    const template = await prisma.template.create({
-      data: {
-        name,
-        materials: {
-          create: project.materials.map(m => ({
-            name: m.name,
-            quantity: m.quantity,
-            category: m.category
-          }))
-        }
-      },
-      include: {
-        materials: true
-      }
-    });
+export const applyTemplate = endpoint(async (req, res) => {
+  const projectId = requiredText(req.body?.projectId, 'Project ID');
+  const project = await db.transaction(async transaction => {
+    const [template] = await transaction.select().from(templates).where(eq(templates.id, req.params.id));
+    if (!template) fail(404, 'Template not found');
+    const [target] = await transaction.select().from(projects).where(eq(projects.id, projectId));
+    if (!target) fail(404, 'Project not found');
+    const items = await transaction.select().from(templateMaterials).where(eq(templateMaterials.templateId, template.id));
+    if (items.length) await transaction.insert(materials).values(items.map(material => ({
+      id: randomUUID(), projectId, name: material.name, quantity: material.quantity, category: material.category
+    })));
+    return { ...target, materials: await transaction.select().from(materials).where(eq(materials.projectId, projectId)) };
+  });
+  res.json(project);
+});
 
-    res.status(201).json(template);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-}
-
-export async function applyTemplate(req, res) {
-  try {
-    const { id } = req.params;
-    const { projectId } = req.body;
-
-    const template = await prisma.template.findUnique({
-      where: { id },
-      include: { materials: true }
-    });
-
-    if (!template) {
-      return res.status(404).json({ error: 'Template not found' });
-    }
-
-    const materials = await prisma.material.createMany({
-      data: template.materials.map(m => ({
-        projectId,
-        name: m.name,
-        quantity: m.quantity,
-        category: m.category
-      }))
-    });
-
-    const updatedProject = await prisma.project.findUnique({
-      where: { id: projectId },
-      include: { materials: true }
-    });
-
-    res.json(updatedProject);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-}
-
-export async function deleteTemplate(req, res) {
-  try {
-    const { id } = req.params;
-    await prisma.template.delete({
-      where: { id }
-    });
-    res.status(204).send();
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-}
+export const deleteTemplate = endpoint(async (req, res) => {
+  const deleted = await db.delete(templates).where(eq(templates.id, req.params.id)).returning({ id: templates.id });
+  if (!deleted.length) fail(404, 'Template not found');
+  res.status(204).send();
+});

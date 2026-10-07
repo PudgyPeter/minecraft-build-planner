@@ -1,114 +1,40 @@
-# Railway Deployment Guide
+# Netlify Deployment
 
-## Prerequisites
+This project deploys its React frontend as static files and its Express API as a Netlify Function. It does not require a continuously running server or a local SQLite file.
 
-- GitHub account
-- Railway account (https://railway.app)
-- PostgreSQL database (provided by Railway)
+## Deployment settings
 
-## Step-by-Step Deployment
+The repository's `netlify.toml` configures the build command, publishes `client/dist`, routes `/api/*` to the API function, and serves `index.html` for frontend navigation. Keep the build base at the repository root so both the frontend and backend dependencies are installed. The committed root and client lockfiles support reproducible installation.
 
-### 1. Push to GitHub
+## Database
+
+Projects, materials, templates, and backup snapshots are stored in Netlify Database using Drizzle ORM. Netlify configures the connection automatically. The database schema is defined in `db/schema.ts`; generated migrations in `netlify/database/migrations` are applied during deployment.
+
+After changing the schema, check migration status and generate a named migration:
 
 ```bash
-git init
-git add .
-git commit -m "Initial commit - Minecraft Build Planner"
-git branch -M main
-git remote add origin <your-github-repo-url>
-git push -u origin main
+netlify db status
+npm run db:generate -- --name add_planner_field
 ```
 
-### 2. Create Railway Project
+The legacy Prisma schema and SQL files are historical SQLite definitions, not the active database setup. Existing SQLite files or Git-based backups are not automatically imported into Netlify Database.
 
-1. Go to https://railway.app
-2. Click "New Project"
-3. Select "Deploy from GitHub repo"
-4. Choose your repository
-5. Railway will auto-detect the configuration
+## Local development
 
-### 3. Add PostgreSQL Database
+Install dependencies in both the root and the client, then run Netlify Dev for frontend, API routing, and the managed database connection:
 
-1. In your Railway project, click "New"
-2. Select "Database" → "PostgreSQL"
-3. Railway will automatically set `DATABASE_URL` environment variable
-
-### 4. Configure Environment Variables
-
-In Railway project settings, add these variables:
-
-- `NODE_ENV` = `production`
-- `DATABASE_URL` = (auto-set by Railway PostgreSQL)
-- `PORT` = (auto-set by Railway)
-- `ACCESS_PASSWORD` = (optional - set if you want password protection)
-
-### 5. Deploy
-
-Railway will automatically:
-- Install dependencies
-- Generate Prisma client
-- Build the React frontend
-- Run database migrations
-- Start the server
-
-### 6. Run Database Migrations
-
-After first deployment, you may need to run migrations:
-
-1. Go to Railway project
-2. Open the service
-3. Click "Settings" → "Variables"
-4. Add a new variable: `RAILWAY_RUN_BUILD_COMMAND` = `npx prisma migrate deploy`
-5. Redeploy
-
-Or use Railway CLI:
 ```bash
-railway run npx prisma migrate deploy
+npm ci
+npm --prefix client ci
+netlify dev --port 8889
 ```
 
-## Post-Deployment
+Use Node.js 22.18 or later. Open the local site on port 8889 rather than the frontend-only Vite port. Netlify Dev uses a local development database. Database-backed routes need the generated schema migrations applied; migrations for deployed environments are applied automatically during deployment.
 
-Your app will be available at: `https://your-app.up.railway.app`
+## Backups
+
+Project changes are saved directly to the database. **Backup Now** and the save keyboard shortcut create a snapshot in Netlify Database, replacing the previous snapshot. **Restore** replaces projects and templates with the saved snapshot inside a transaction. **Download** exports the current data as JSON. These operations do not write local files, run Git commands, or depend on background timers.
 
 ## Troubleshooting
 
-### Database Connection Issues
-- Ensure PostgreSQL service is running
-- Check `DATABASE_URL` is set correctly
-- Run `npx prisma migrate deploy` manually
-
-### Build Failures
-- Check build logs in Railway dashboard
-- Ensure all dependencies are in `package.json`
-- Verify Node.js version compatibility
-
-### Frontend Not Loading
-- Ensure `npm run build` completed successfully
-- Check that `client/dist` folder exists after build
-- Verify Express is serving static files in production mode
-
-## Local Development
-
-```bash
-# Install dependencies
-npm install
-cd client && npm install && cd ..
-
-# Set up database
-cp .env.example .env
-# Edit .env with your local database URL
-npx prisma migrate dev
-
-# Run development servers
-npm run dev  # Backend on port 3000
-cd client && npm run dev  # Frontend on port 5173
-```
-
-## Environment Variables Reference
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `DATABASE_URL` | Yes | PostgreSQL connection string |
-| `PORT` | No | Server port (auto-set by Railway) |
-| `NODE_ENV` | Yes | Set to `production` for Railway |
-| `ACCESS_PASSWORD` | No | Optional password protection |
+If the homepage returns a 404, verify that the deploy publishes `client/dist` and completed the configured frontend build. If API requests fail, check `/api/health`, the API function logs, and database migration status. Unknown API routes return JSON errors rather than the frontend HTML.

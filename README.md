@@ -1,4 +1,4 @@
-# 🚂 Minecraft Build Planner
+# Minecraft Build Planner
 
 A full-stack web app for planning Minecraft builds, tracking materials, and calculating crafting requirements.
 
@@ -9,62 +9,33 @@ A full-stack web app for planning Minecraft builds, tracking materials, and calc
 - 🧮 Recursive crafting calculator
 - 📦 Reusable templates
 - 🌙 Dark mode UI
-- 🚂 Railway-ready deployment
+- Netlify deployment with persistent project storage
 
 ## Tech Stack
 
-- **Backend**: Node.js, Express, Prisma ORM
-- **Database**: PostgreSQL (production), SQLite (development)
+- **Backend**: Node.js, Express, Netlify Functions, Drizzle ORM
+- **Database**: Netlify Database (managed PostgreSQL)
 - **Frontend**: React, Vite, TailwindCSS
 
 ## Local Development
 
-1. Install dependencies:
+Use Node.js 22.18 or later and install dependencies:
 ```bash
-npm install
-cd client && npm install && cd ..
+npm ci
+npm --prefix client ci
 ```
 
-2. Set up environment:
+Start the frontend and API together with Netlify Dev:
 ```bash
-cp .env.example .env
+netlify dev --port 8889
 ```
 
-3. Initialize database:
-```bash
-npx prisma migrate dev
-```
+Open the site on port 8889. Netlify manages the database connection; database migrations are applied during deployment.
 
-4. Start development server:
-```bash
-npm run dev
-```
+## Netlify Deployment
 
-5. In another terminal, start the client:
-```bash
-cd client && npm run dev
-```
+Connect this repository to Netlify using the repository root as the build base. `netlify.toml` configures the frontend build, publishes `client/dist`, and routes API requests to the backend function. Frontend navigation falls back to `index.html` instead of returning a page-not-found error.
 
-## Production Build
+See `DEPLOYMENT.md` for deployment, database migrations, backups, and troubleshooting.
 
-```bash
-cd client && npm run build && cd ..
-npm start
-```
-
-## Railway Deployment
-
-1. Connect your GitHub repository to Railway
-2. Add PostgreSQL database service
-3. Set environment variables:
-   - `DATABASE_URL` (auto-set by Railway)
-   - `NODE_ENV=production`
-   - `ACCESS_PASSWORD` (optional)
-4. Deploy!
-
-## Environment Variables
-
-- `DATABASE_URL`: Database connection string
-- `PORT`: Server port (default: 3000)
-- `NODE_ENV`: Environment (development/production)
-- `ACCESS_PASSWORD`: Optional password protection
+Backups are saved as database snapshots, not committed to Git. Restoring a snapshot replaces the current projects and templates; downloading a backup exports the current data.
